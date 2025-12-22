@@ -322,7 +322,7 @@ function setupPreviewControls() {
 // --- Subsetting Logic ---
 
 async function loadHarfbuzzSubset() {
-  const response = await fetch("assets/vendors/hb-subset.wasm")
+  const response = await fetch("/assets/vendors/hb-subset.wasm")
   const result = await WebAssembly.instantiateStreaming(response)
   return result.instance.exports
 }

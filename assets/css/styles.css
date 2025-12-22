@@ -223,8 +223,7 @@ footer {
 
 /* Export Section */
 .export-section {
-  background: var(--primary-lighten);
-  padding: var(--spacing-l);
+  padding: var(--spacing-m);
   border-radius: var(--radius-8);
   border: 1px solid var(--primary);
 }
@@ -243,6 +242,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: var(--spacing-s);
 }
 
 .export-status {
@@ -325,10 +325,9 @@ hr {
 /* CSS Rule Display */
 .css-rule-display {
   background: var(--layer-1);
-  padding: var(--spacing-m);
+  padding: var(--spacing-s);
   border-radius: var(--radius-4);
   border: 1px solid var(--border-light);
-  margin-bottom: var(--spacing-m);
 }
 
 .css-rule {
