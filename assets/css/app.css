@@ -17,6 +17,3 @@
 
 /* Animations */
 @import "anime.css" layer(utilities);
-
-/* Utilities */
-@import "utilities.css" layer(utilities);

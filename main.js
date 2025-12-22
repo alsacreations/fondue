@@ -2,6 +2,8 @@
  * main.js - Variable Font Subsetter Logic
  */
 
+import opentype from "opentype.js"
+
 // --- State ---
 let fontBuffer = null
 let fontFileName = "custom-font.ttf"
@@ -35,9 +37,78 @@ async function loadFontBuffer(buffer, name) {
     fontObj = opentype.parse(buffer)
     console.log("Font loaded:", fontObj)
 
-    // Update UI
-    fontInfo.innerHTML = `<p class="flex-center-y gap-s"><span class="icon text-primary">✓</span> <strong>${fontObj.names.fontFamily?.en || name}</strong> chargé (${Math.round(buffer.byteLength / 1024)} KB)</p>`
+    // Extract comprehensive metadata
+    const fontName =
+      fontObj.names.fullName?.en || fontObj.names.fontFamily?.en || name
+    const fontFamily = fontObj.names.fontFamily?.en || "Unknown"
+    const manufacturer = fontObj.names.manufacturer?.en || "Unknown"
+    const designer = fontObj.names.designer?.en || "Unknown"
+
+    // File info
+    const fileSizeKB = Math.round(buffer.byteLength / 1024)
+    const fileFormat = name.split(".").pop().toUpperCase()
+
+    // Variable font detection
+    const fvar = fontObj.tables.fvar
+    const isVariableFont = fvar && fvar.axes && fvar.axes.length > 0
+    const axesCount = isVariableFont ? fvar.axes.length : 0
+
+    // Character and glyph counts
+    const glyphCount = fontObj.numGlyphs
+    // Count actual characters (glyphs with unicode values)
+    let charCount = 0
+    for (let i = 0; i < fontObj.numGlyphs; i++) {
+      const glyph = fontObj.glyphs.get(i)
+      if (glyph.unicode !== undefined) {
+        charCount++
+      }
+    }
+
+    // Update UI with detailed info
+    fontInfo.innerHTML = `
+      <dl class="font-info-list">
+        <div class="font-info-item">
+          <dt>Nom</dt>
+          <dd><strong>${fontName}</strong></dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Fonte Variable</dt>
+          <dd>${isVariableFont ? `Oui (${axesCount} axe${axesCount > 1 ? "s" : ""})` : "Non"}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Poids</dt>
+          <dd>${fileSizeKB} KB</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Format</dt>
+          <dd>${fileFormat}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Caractères</dt>
+          <dd>${charCount}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Glyphes</dt>
+          <dd>${glyphCount}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Font family</dt>
+          <dd>${fontFamily}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Manufacturer</dt>
+          <dd>${manufacturer}</dd>
+        </div>
+        <div class="font-info-item">
+          <dt>Designer</dt>
+          <dd>${designer}</dd>
+        </div>
+      </dl>
+    `
     appWorkspace.classList.remove("hidden-aria")
+
+    // Generate and display @font-face CSS immediately
+    generateFontFaceCSS()
 
     // Extract Axes
     renderAxes()
@@ -104,15 +175,31 @@ function renderAxes() {
     return
   }
 
+  // Create CSS rule display container
+  const cssRuleContainer = document.createElement("div")
+  cssRuleContainer.className = "css-rule-display"
+  cssRuleContainer.id = "css-rule-display"
+
+  // Initial CSS rule
+  const initialSettings = fvar.axes
+    .map((axis) => `"${axis.tag}" ${axis.defaultValue}`)
+    .join(", ")
+
+  cssRuleContainer.innerHTML = `
+    <code class="css-rule">font-variation-settings: ${initialSettings};</code>
+  `
+
+  axesContainer.appendChild(cssRuleContainer)
+
   fvar.axes.forEach((axis) => {
     axes[axis.tag] = axis.defaultValue // Init state
 
     const wrapper = document.createElement("div")
-    wrapper.className = "axis-control flow-xs"
+    wrapper.className = "axis-control"
 
     const labelRow = document.createElement("div")
-    labelRow.className = "flex-between text-s"
-    labelRow.innerHTML = `<span><strong class="text-uppercase">${axis.tag}</strong> (${axis.name.en || axis.tag})</span> <span id="val-${axis.tag}">${axis.defaultValue}</span>`
+    labelRow.className = "axis-label"
+    labelRow.innerHTML = `<span><strong class="axis-name">${axis.tag}</strong> (${axis.name.en || axis.tag})</span> <span id="val-${axis.tag}">${axis.defaultValue}</span>`
 
     const slider = document.createElement("input")
     slider.type = "range"
@@ -127,6 +214,7 @@ function renderAxes() {
       axes[axis.tag] = val
       document.getElementById(`val-${axis.tag}`).textContent = val
       updatePreviewFont()
+      updateCSSRule()
     }
 
     wrapper.appendChild(labelRow)
@@ -158,6 +246,73 @@ function updatePreviewFont() {
   })
 }
 
+function updateCSSRule() {
+  const cssRuleDisplay = document.getElementById("css-rule-display")
+  if (!cssRuleDisplay) return
+
+  const variationSettings = Object.entries(axes)
+    .map(([tag, val]) => `"${tag}" ${val}`)
+    .join(", ")
+
+  cssRuleDisplay.innerHTML = `
+    <code class="css-rule">font-variation-settings: ${variationSettings};</code>
+  `
+}
+
+function generateFontFaceCSS() {
+  const container = document.getElementById("font-face-css-container")
+  const codeElement = document.getElementById("font-face-css-code")
+
+  if (!container || !codeElement || !fontObj) return
+
+  // Generate @font-face CSS for the optimized WOFF2 file
+  const fontFamily = fontObj.names.fontFamily?.en || "CustomFont"
+  const sanitizedFileName = fontFileName.replace(/\s+/g, "-").toLowerCase()
+  const baseName = sanitizedFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")
+
+  // Check if variable font
+  const fvar = fontObj.tables.fvar
+  const isVariableFont = fvar && fvar.axes && fvar.axes.length > 0
+
+  let fontFaceCSS = ""
+
+  if (isVariableFont) {
+    // Get weight range from wght axis if available
+    const wghtAxis = fvar.axes.find((axis) => axis.tag === "wght")
+    const weightRange = wghtAxis
+      ? `${Math.round(wghtAxis.minValue)} ${Math.round(wghtAxis.maxValue)}`
+      : "100 900"
+
+    fontFaceCSS = `@font-face {
+  font-family: "${fontFamily} Variable";
+  src: url("assets/fonts/subset-${baseName}.woff2") format("woff2") tech("variations"), url("assets/fonts/subset-${baseName}.woff2") format("woff2-variations");
+  font-weight: ${weightRange};
+  font-display: swap;
+}`
+  } else {
+    // Get font weight from OS/2 table
+    const os2Table = fontObj.tables.os2
+    const fontWeight = os2Table?.usWeightClass || 400
+
+    // Get font style
+    const isItalic =
+      fontObj.names.fontSubfamily?.en?.toLowerCase().includes("italic") || false
+    const fontStyle = isItalic ? "italic" : "normal"
+
+    fontFaceCSS = `@font-face {
+  font-family: "${fontFamily}";
+  src: url("assets/fonts/subset-${baseName}.woff2") format("woff2");
+  font-weight: ${fontWeight};
+  font-style: ${fontStyle};
+  font-display: swap;
+}`
+  }
+
+  // Display the CSS code
+  codeElement.textContent = fontFaceCSS
+  container.style.display = "block"
+}
+
 function setupPreviewControls() {
   previewSize.addEventListener("input", (e) => {
     previewText.style.fontSize = e.target.value + "px"
@@ -187,8 +342,7 @@ function renderUnicodeCheckboxes() {
 
   Object.entries(UNICODE_RANGES).forEach(([key, data]) => {
     const label = document.createElement("label")
-    label.className =
-      "checkbox-card bg-surface border-light padding-s radius-s flex-center-y gap-s"
+    label.className = "checkbox-card"
     const checked = key === "latin" ? "checked" : ""
     label.innerHTML = `
             <input type="checkbox" name="subset" value="${key}" ${checked}>
@@ -299,10 +453,14 @@ async function generateSubset() {
     exports.hb_face_destroy(face)
     exports.free(fontPtr)
 
-    exportStatus.innerHTML = "Téléchargement..."
+    // Display success message
+    exportStatus.innerHTML = `<p class="text-success">✓ Subset créé avec succès ! Téléchargement en cours...</p>`
+
+    // Trigger download
     triggerDownload(subsetBuffer.buffer, `subset-${fontFileName}`)
 
-    exportStatus.innerHTML = "Terminé !"
+    // Update message after download
+    exportStatus.innerHTML = `<p class="text-success">✓ Fichier téléchargé avec succès !</p>`
   } catch (err) {
     console.error(err)
     exportStatus.innerHTML = `<span class="text-error">Erreur: ${err.message}</span>`

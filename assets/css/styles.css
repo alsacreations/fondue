@@ -10,6 +10,7 @@
 
 /* Base */
 body {
+  padding: var(--spacing-s);
   background-color: var(--surface);
   color: var(--on-surface);
   font-family: var(--font-base);
@@ -22,14 +23,9 @@ body {
   display: none !important;
 }
 .hidden-aria[aria-hidden="true"] {
-  opacity: 0.4;
-  pointer-events: none;
-  filter: grayscale(1);
+  display: none;
 }
-.sticky-top {
-  position: sticky;
-  align-self: start;
-}
+
 .width-100 {
   width: 100%;
 }
@@ -45,19 +41,6 @@ body {
 }
 .cursor-pointer {
   cursor: pointer;
-}
-
-/* UI Components specific to Font Tool */
-.drop-zone {
-  border: 2px dashed var(--border);
-  transition: all 0.3s ease;
-  background: var(--surface);
-  cursor: pointer;
-}
-.drop-zone:hover,
-.drop-zone.drag-over {
-  border-color: var(--primary);
-  background: var(--surface-2);
 }
 
 /* Tabs */
@@ -139,4 +122,296 @@ body {
 .title-s {
   font-size: var(--text-s);
   font-weight: var(--font-weight-semibold);
+}
+
+/* Page Structure */
+.header {
+  padding-block: var(--spacing-l);
+}
+
+main {
+  padding-block: var(--spacing-l);
+}
+
+footer {
+  padding-block: var(--spacing-l);
+  text-align: center;
+  border-top: 1px solid var(--border-light);
+  margin-top: var(--spacing-xl);
+}
+
+/* Sections & Cards */
+.section-card {
+  border-radius: var(--radius-8);
+}
+
+.section-card-light {
+  background: var(--surface);
+  padding: var(--spacing-s);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--border-light);
+}
+
+.section-title {
+  margin-bottom: var(--spacing-m);
+}
+
+.section-description {
+  font-size: var(--text-s);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-s);
+}
+
+/* Drop Zone */
+.drop-zone {
+  display: grid;
+  background: var(--layer-2);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-8);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  background: var(--layer-3);
+}
+
+.drop-zone-title {
+  font-size: var(--text-l);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-s);
+}
+
+.drop-zone-hint {
+  font-size: var(--text-m);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-s);
+}
+
+.drop-zone-actions {
+  margin-top: var(--spacing-s);
+}
+
+/* Preview Box */
+.preview-container {
+  background: var(--layer-2);
+  padding: var(--spacing-m);
+  border-radius: var(--radius-8);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-box {
+  background: var(--surface);
+  padding: var(--spacing-l);
+  border-radius: var(--radius-4);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  margin-bottom: var(--spacing-m);
+}
+
+.preview-controls {
+  gap: var(--spacing-s);
+  border-top: 1px solid var(--border-light);
+  padding-block: var(--spacing-s);
+}
+
+/* Export Section */
+.export-section {
+  background: var(--primary-lighten);
+  padding: var(--spacing-l);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--primary);
+}
+
+.export-title {
+  color: var(--primary);
+  margin-bottom: var(--spacing-m);
+}
+
+.export-description {
+  font-size: var(--text-s);
+  margin-bottom: var(--spacing-m);
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.export-status {
+  font-size: var(--text-s);
+}
+
+/* Axis Controls */
+.axis-control {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.axis-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-s);
+}
+
+.axis-name {
+  text-transform: uppercase;
+}
+
+/* Checkbox Card */
+.checkbox-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  padding: var(--spacing-s);
+  border-radius: var(--radius-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+}
+
+/* Utility - Horizontal Rule */
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-light);
+  margin-block: var(--spacing-l);
+}
+
+/* Text Colors */
+.text-primary {
+  color: var(--primary);
+}
+
+.text-muted {
+  color: var(--color-gray-600);
+}
+
+/* Font Info List */
+.font-info-list {
+  display: grid;
+  gap: var(--spacing-xs);
+  margin: 0;
+}
+
+.font-info-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--spacing-s);
+}
+
+.font-info-item:last-child {
+  border-bottom: none;
+}
+
+.font-info-item dt {
+  font-size: var(--text-s);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-regular);
+}
+
+.font-info-item dd {
+  margin: 0;
+  font-size: var(--text-s);
+  font-weight: var(--font-weight-medium);
+  text-align: right;
+}
+
+/* CSS Rule Display */
+.css-rule-display {
+  background: var(--layer-1);
+  padding: var(--spacing-m);
+  border-radius: var(--radius-4);
+  border: 1px solid var(--border-light);
+  margin-bottom: var(--spacing-m);
+}
+
+.css-rule {
+  display: block;
+  font-family: var(--font-mono, "Courier New", monospace);
+  font-size: var(--text-s);
+  color: var(--primary);
+  word-break: break-all;
+}
+
+/* @font-face CSS Block */
+.font-face-css-block {
+  margin-top: var(--spacing-m);
+}
+
+.css-code-block {
+  background: var(--layer-1);
+  padding: var(--spacing-m);
+  border-radius: var(--radius-4);
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+  margin: 0;
+}
+
+.css-code-block code {
+  font-family: var(--font-mono, "Courier New", monospace);
+  font-size: var(--text-s);
+  line-height: 1.6;
+  color: var(--on-surface);
+  white-space: pre;
+}
+
+/* Success Message */
+.text-success {
+  color: var(--success);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-s);
+}
+
+/* Footer */
+.footer {
+  padding-block: var(--spacing-xl) var(--spacing-l);
+}
+.logo-alsacreations-pepins-inner {
+  fill: var(--surface);
+}
+
+.footer-alsa {
+  text-align: center;
+
+  & p {
+    margin: 0;
+  }
+
+  & .logo-alsacreations {
+    width: 150px;
+  }
+}
+
+.logo-link {
+  display: inline-block;
+  margin: auto;
+  color: var(--accent);
+
+  @media (width >= 48rem) {
+    &:focus,
+    &:hover {
+      animation: spaceboots 2s linear infinite alternate;
+    }
+  }
+}
+
+.btn-github {
+  --button-background-color: oklch(51.33% 0.18 256.37);
+  --button-background-color-hover: oklch(
+    from oklch(51.33% 0.18 256.37) calc(l * 0.9) c h
+  );
+  --button-border-color: transparent;
+  --button-text-color: var(--color-white);
+  color: var(--color-white);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-white);
+  }
 }
