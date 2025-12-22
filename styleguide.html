@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Styleguide</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <!-- Les CSS ne sont pas chargés statiquement ici.
+          Le styleguide injecte dynamiquement le CSS généré ou chargé
+          (runtime/injected) pour éviter d'utiliser les assets comme source d'autorité. -->
+    <link rel="stylesheet" href="assets/css/reset.css" />
+    <link rel="stylesheet" href="assets/css/layouts.css" />
+    <style>
+      [data-layout*="autogrid"] {
+        --col-min-size: 200px;
+      }
+
+      body {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        background: var(--surface, #ffffff);
+        color: var(--on-surface, #000000);
+        font-family: system-ui, sans-serif;
+      }
+
+      .header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--primary, #007bff);
+      }
+
+      .header h1 {
+        margin: 0 0 0.5rem;
+        color: var(--on-surface, #666666);
+      }
+
+      .header p {
+        margin: 0;
+        color: var(--on-surface, #ffffff);
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--on-surface, #ffffff);
+        border-radius: 4px;
+        color: var(--on-surface, #ffffff);
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        background: var(--primary, #007bff);
+        color: var(--on-primary, #ffffff);
+      }
+
+      .section {
+        margin-bottom: 3rem;
+      }
+
+      .section h2 {
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary, #007bff);
+        color: var(--on-surface, #666666);
+      }
+
+      .section h3 {
+        margin-bottom: 1rem;
+        color: var(--on-surface, #666666);
+      }
+
+      .token-demo {
+        margin-bottom: 0.5rem;
+        padding: 1rem;
+        border: 1px solid #444444;
+        border-radius: 8px;
+        background: var(--surface, #ffffff);
+      }
+
+      .color-swatch {
+        width: 4rem;
+        height: 3rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid #444444;
+        border-radius: 4px;
+      }
+
+      .spacing-ruler {
+        height: 0.25rem;
+        margin-bottom: 0.5rem;
+        background: var(--primary, #007bff);
+      }
+
+      .typo-sample {
+        margin-bottom: 0.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        & > * {
+          white-space: nowrap;
+        }
+      }
+
+      .variable-name {
+        color: var(--on-surface, #666666);
+        font-family: ui-monospace, monospace;
+        font-size: 0.9em;
+      }
+
+      .loading {
+        padding: 2rem;
+        color: var(--accent, #666666);
+        text-align: center;
+      }
+
+      .error {
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 4px;
+        background: #f8d7da;
+        color: #dc3545;
+      }
+
+      @media (width <= 48rem) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  
+        <script>
+          // CSS injecté pour version téléchargée
+          window.INJECTED_THEME_CSS = `/* ----------------------------------
+ * Theme du projet (valeurs primitives)
+ * ----------------------------------
+ */
+
+/* stylelint-disable */
+/* Breakpoints custom (si compatibles) */
+@custom-media --md (width >= 48rem);
+@custom-media --lg (width >= 64rem);
+@custom-media --xl (width >= 80rem);
+@custom-media --xxl (width >= 96rem);
+@custom-media --until-md (width < 48rem);
+@custom-media --until-lg (width < 64rem);
+@custom-media --until-xl (width < 80rem);
+@custom-media --until-xxl (width < 96rem);
+/* stylelint-enable */
+
+:root {
+
+  /* Breakpoints (en dur) */
+  --md: 48rem; /* 768px */
+  --lg: 64rem; /* 1024px */
+  --xl: 80rem; /* 1280px */
+  --xxl: 96rem; /* 1536px */
+
+  /* Transitions et animations */
+  --transition-duration: 250ms;
+
+  /* Niveaux de z-index */
+  --z-under-page-level: -1;
+  --z-above-page-level: 1;
+  --z-header-level: 1000;
+  --z-above-header-level: 2000;
+  --z-above-all-level: 3000;
+
+  /* Espacements */
+  --spacing-0: 0;
+  --spacing-1: 1px;
+  --spacing-2: 0.125rem;
+  --spacing-4: 0.25rem;
+  --spacing-8: 0.5rem;
+  --spacing-12: 0.75rem;
+  --spacing-16: 1rem;
+  --spacing-20: 1.25rem;
+  --spacing-24: 1.5rem;
+  --spacing-32: 2rem;
+  --spacing-40: 2.5rem;
+  --spacing-48: 3rem;
+  --spacing-64: 4rem;
+  --spacing-80: 5rem;
+
+  /* Familles de police */
+  --font-base:  system-ui, sans-serif;
+  --font-mono:  ui-monospace, monospace;
+
+  /* Graisses de police */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* Tailles de police */
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-24: 1.5rem;
+  --text-28: 1.75rem;
+  --text-32: 2rem;
+  --text-36: 2.25rem;
+  --text-40: 2.5rem;
+  --text-48: 3rem;
+  --text-64: 4rem;
+  --text-80: 5rem;
+
+  /* Interlignage (line-height) */
+  --line-height-20: 1.25rem;
+  --line-height-24: 1.5rem;
+  --line-height-28: 1.75rem;
+  --line-height-32: 2rem;
+  --line-height-36: 2.25rem;
+  --line-height-40: 2.5rem;
+  --line-height-48: 3rem;
+  --line-height-56: 3.5rem;
+  --line-height-80: 5rem;
+  --line-height-100: 6.25rem;
+
+  /* Border radius */
+  --radius-none: 0;
+  --radius-4: 0.25rem;
+  --radius-8: 0.5rem;
+  --radius-12: 0.75rem;
+  --radius-16: 1rem;
+  --radius-24: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Couleurs (globales) */
+  --color-white: oklch(1 0 0);
+  --color-black: oklch(0 0 0);
+  --color-gray-50: oklch(0.97 0 0);
+  --color-gray-100: oklch(0.922 0 0);
+  --color-gray-200: oklch(0.87 0 0);
+  --color-gray-300: oklch(0.708 0 0);
+  --color-gray-400: oklch(0.556 0 0);
+  --color-gray-500: oklch(0.439 0 0);
+  --color-gray-600: oklch(0.371 0 0);
+  --color-gray-700: oklch(0.269 0 0);
+  --color-gray-800: oklch(0.205 0 0);
+  --color-gray-900: oklch(0.145 0 0);
+  --color-error-100: oklch(0.97 0.1 27.52);
+  --color-error-300: oklch(0.7054 0.19 27.52);
+  --color-error-500: oklch(0.5054 0.19 27.52);
+  --color-error-700: oklch(0.3554 0.19 27.52);
+  --color-error-900: oklch(0.2054 0.11 27.52);
+  --color-success-100: oklch(0.9446 0.13 150.685);
+  --color-success-300: oklch(0.7166 0.13 150.73);
+  --color-success-500: oklch(0.5166 0.13 150.73);
+  --color-success-700: oklch(0.3666 0.13 150.73);
+  --color-success-900: oklch(0.2166 0.13 150.73);
+  --color-warning-100: oklch(0.97 0.08 49.95);
+  --color-warning-300: oklch(0.8315 0.17 49.95);
+  --color-warning-500: oklch(0.6315 0.17 49.95);
+  --color-warning-700: oklch(0.4815 0.17 49.95);
+  --color-warning-900: oklch(0.3315 0.11 49.95);
+  --color-info-100: oklch(0.97 0.09 256.37);
+  --color-info-300: oklch(0.7133 0.18 256.37);
+  --color-info-500: oklch(0.5133 0.18 256.37);
+  --color-info-700: oklch(0.3633 0.18 256.37);
+  --color-info-900: oklch(0.2133 0.11 256.37);
+}
+`;
+          window.INJECTED_TOKENS_CSS = `/* ----------------------------------
+ * Theme-tokens, généré par primary.alsacreations.com
+ * Surcouche de theme.css
+ * Configuration :
+ * - Couleur primaire : gray
+ * - Theme : light et dark
+ * - Typographie responsive : oui
+ * - Espacements responsive : oui
+ * ----------------------------------
+ */
+:root {
+  /* Theme (color-scheme) */
+  color-scheme: light dark;
+
+  &[data-theme="light"] {
+  color-scheme: light;
+  }
+
+  &[data-theme="dark"] {
+  color-scheme: dark;
+  }
+
+  /* Couleur primaire */
+  --primary: var(--color-gray-500);
+  --on-primary: var(--color-white);
+  --primary-lighten: oklch(from var(--primary) calc(l * 1.2) c h);
+  --primary-darken: oklch(from var(--primary) calc(l * 0.8) c h);
+
+  /* Couleur d'accent */
+  --accent: light-dark(var(--primary), var(--primary-lighten));
+  --accent-invert: light-dark(var(--primary-lighten), var(--primary));
+
+  /* Surface du document */
+  --surface: light-dark(var(--color-white), var(--color-gray-900));
+  --on-surface: light-dark(var(--color-gray-900), var(--color-gray-100));
+
+  /* Niveaux de profondeur */
+  --layer-1: light-dark(var(--color-gray-50), var(--color-gray-800));
+  --layer-2: light-dark(var(--color-gray-100), var(--color-gray-700));
+  --layer-3: light-dark(var(--color-gray-200), var(--color-gray-600));
+
+  /* Interactions */
+  --link: light-dark(var(--primary), var(--primary-lighten));
+  --link-hover: light-dark(var(--primary-darken), var(--primary));
+  --link-active: light-dark(var(--primary-darken), var(--primary));
+
+  /* Couleur de sélection */
+  --selection: light-dark(var(--primary-lighten), var(--primary-darken));
+
+  /* États d'alerte */
+  --warning: light-dark(var(--color-warning-500), var(--color-warning-300));
+  --error: light-dark(var(--color-error-500), var(--color-error-300));
+  --success: light-dark(var(--color-success-500), var(--color-success-300));
+  --info: light-dark(var(--color-info-500), var(--color-info-300));
+
+  /* Bordures */
+  --border-light: var(--color-gray-400);
+  --border-medium: var(--color-gray-600);
+
+  /* Tailles de police */
+  --text-s: var(--text-14);
+  --text-m: clamp(var(--text-16), 0.9565rem + 0.2174vw, var(--text-18));
+  --text-l: clamp(var(--text-18), 1.0761rem + 0.2174vw, var(--text-20));
+  --text-xl: clamp(var(--text-20), 0.957rem + 1.3043vw, var(--text-32));
+  --text-2xl: clamp(var(--text-24), 1.2065rem + 1.3043vw, var(--text-36));
+  --text-3xl: clamp(var(--text-32), 1.609rem + 1.7391vw, var(--text-48));
+  --text-4xl: clamp(var(--text-48), 2.1818rem + 3.6364vw, var(--text-80));
+
+  /* Hauteurs de lignes */
+  --line-height-s: clamp(var(--line-height-20), 1.1522rem + 0.4348vw, var(--line-height-24));
+  --line-height-m: clamp(var(--line-height-24), 1.4022rem + 0.4348vw, var(--line-height-28));
+  --line-height-2xl: clamp(var(--line-height-32), 1.9022rem + 0.4348vw, var(--line-height-36));
+  --line-height-5xl: clamp(var(--line-height-40), 1.8152rem + 3.0435vw, var(--line-height-68));
+  --line-height-4xl: clamp(var(--line-height-40), 2.1087rem + 1.7391vw, var(--line-height-56));
+  --line-height-6xl: clamp(var(--line-height-80), 4.5109rem + 2.1739vw, var(--line-height-100));
+
+  /* Espacements */
+  --spacing-xs: var(--spacing-4);
+  --spacing-s: clamp(var(--spacing-8), 0.2955rem + 0.9091vw, var(--spacing-16));
+  --spacing-m: clamp(var(--spacing-16), 0.5909rem + 1.8182vw, var(--spacing-32));
+  --spacing-l: clamp(var(--spacing-24), 0.8864rem + 2.2727vw, var(--spacing-48));
+  --spacing-xl: clamp(var(--spacing-32), 0.7727rem + 5.4545vw, var(--spacing-80));
+
+  /* Tokens complémentaires */
+  --form-control-background: light-dark(var(--color-gray-200), var(--color-gray-700));
+  --on-form-control: light-dark(var(--color-gray-900), var(--color-gray-100));
+  --form-control-spacing: var(--spacing-12) var(--spacing-16);
+  --form-control-border-width: 1px;
+  --form-control-border-color: var(--color-gray-400);
+  --form-control-border-radius: var(--radius-16);
+  --checkables-border-color: var(--color-gray-400);
+  --checkable-size: 1.25em;
+}
+
+`;
+        </script>
+      </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Styleguide</h1>
+        <p>
+          Génération automatique basée sur les fichiers CSS configurés dans
+          l'application
+        </p>
+      </header>
+
+      <!-- Source indicator removed: the styleguide no longer displays a 'Source des tokens' paragraph -->
+
+      <div id="loading" class="loading">
+        <p>Chargement des fichiers CSS...</p>
+      </div>
+
+      <div id="content" data-layout="duo" style="gap: 2rem">
+        <div>
+          <div class="section">
+            <h2>Tokens Sémantiques (theme-tokens.css)</h2>
+            <div id="tokens-content">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section">
+            <h2>Primitives (theme.css)</h2>
+            <div id="primitives-content">
+              <!-- Contenu généré dynamiquement -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error" style="display: none"></div>
+    </div>
+
+    <script>
+      class StyleguideGenerator {
+        constructor() {
+          this.tokens = {};
+          this.primitives = {};
+          this.init();
+        }
+
+        async init() {
+          try {
+            await this.loadCSSFiles();
+            this.generateStyleguide();
+            this.hideLoading();
+          } catch (error) {
+            this.showError(`Erreur lors du chargement : ${error.message}`);
+          }
+        }
+
+        async loadCSSFiles() {
+          let tokensCSS, primitivesCSS;
+
+          // Vérifier si le CSS est injecté directement (version téléchargée)
+          if (window.INJECTED_THEME_CSS && window.INJECTED_TOKENS_CSS) {
+            primitivesCSS = window.INJECTED_THEME_CSS;
+            tokensCSS = window.INJECTED_TOKENS_CSS;
+          } else {
+            // Sinon, charger depuis les fichiers externes
+            try {
+              // Tentative 1: essayer d'utiliser l'état / générateurs runtime
+              try {
+                const stateModule = await import(
+                  "./assets/js/modules/state.js"
+                );
+                const generators = await import(
+                  "./assets/js/modules/generators.js"
+                );
+
+                // generators génèrent le CSS en s'appuyant sur `state`
+                try {
+                  primitivesCSS = generators.generateThemeCSS();
+                  tokensCSS = generators.generateTokensCSS();
+                } catch (e) {
+                  console.warn(
+                    "Générateurs présents mais échec de génération:",
+                    e
+                  );
+                }
+              } catch (e) {
+                // Si import dynamique impossible ou modules absents, on ne poursuit pas
+                console.info(
+                  "Modules state/generators non disponibles en runtime, saut."
+                );
+              }
+
+              // Si aucun contenu généré par les modules n'a été obtenu,
+              // autoriser explicitement le chargement depuis `assets/css` via
+              // le paramètre d'URL `?useAssets=true` (prévisualisation explicite).
+              if (!tokensCSS || !primitivesCSS) {
+                const params = new URLSearchParams(window.location.search);
+                const allowAssets = params.get("useAssets") === "true";
+                if (!allowAssets) {
+                  throw new Error(
+                    "Aucun contenu injecté ou généré disponible. Pour prévisualiser les fichiers d'assets, ajoutez '?useAssets=true' à l'URL. Pour le kit ZIP, le styleguide utilise toujours les fichiers injectés au moment de la génération."
+                  );
+                }
+
+                // Chargement explicite des fichiers assets (prévisualisation)
+                const [tokensResponse, primitivesResponse] = await Promise.all([
+                  fetch("./assets/css/theme-tokens.css"),
+                  fetch("./assets/css/theme.css"),
+                ]);
+
+                if (tokensResponse.ok && primitivesResponse.ok) {
+                  tokensCSS = await tokensResponse.text();
+                  primitivesCSS = await primitivesResponse.text();
+
+                  console.warn(
+                    "Chargement depuis assets/css/ (mode preview via ?useAssets=true)."
+                  );
+                } else {
+                  throw new Error("Fichiers non trouvés dans assets/css/");
+                }
+              }
+            } catch (error) {
+              throw new Error("Impossible de charger les fichiers CSS");
+            }
+          }
+
+          // Injecter le CSS chargé/généré dans le document pour que
+          // les variables CSS s'appliquent immédiatement à l'aperçu.
+          try {
+            const head =
+              document.head || document.getElementsByTagName("head")[0];
+            let themeStyle = document.getElementById("injected-theme-css");
+            if (!themeStyle) {
+              themeStyle = document.createElement("style");
+              themeStyle.id = "injected-theme-css";
+              head.appendChild(themeStyle);
+            }
+            themeStyle.textContent = primitivesCSS || "";
+
+            let tokensStyle = document.getElementById("injected-tokens-css");
+            if (!tokensStyle) {
+              tokensStyle = document.createElement("style");
+              tokensStyle.id = "injected-tokens-css";
+              head.appendChild(tokensStyle);
+            }
+            tokensStyle.textContent = tokensCSS || "";
+          } catch (e) {
+            console.warn("Impossible d'injecter le CSS dans le head:", e);
+          }
+
+          // Parse des variables CSS
+          this.tokens = this.parseCSS(tokensCSS);
+          this.primitives = this.parseCSS(primitivesCSS);
+        }
+
+        parseCSS(cssContent) {
+          const variables = {};
+
+          // Expression régulière pour capturer les variables CSS
+          const variableRegex = /--([a-zA-Z0-9-]+):\s*([^;]+);/g;
+          let match;
+
+          while ((match = variableRegex.exec(cssContent)) !== null) {
+            const [, name, value] = match;
+            const fullName = `--${name}`;
+
+            // Variables fantômes non canoniques à exclure
+            const phantomTextVariables = [
+              "--text-10",
+              "--text-11",
+              "--text-12",
+              "--text-13",
+              "--text-15",
+              "--text-17",
+            ];
+
+            // Variables mal catégorisées à exclure
+            const excludedVariables = [
+              "--checkable-size", // N'est pas une couleur
+              "--form-control-spacing", // S'affiche mal
+            ];
+
+            // Filtre les variables qui ne devraient pas être affichées
+            // Option 1: afficher toutes les primitives sauf les exclusions explicites
+            const shouldExclude = excludedVariables.includes(fullName);
+
+            if (shouldExclude) {
+            } else {
+              variables[fullName] = value.trim();
+            }
+          }
+
+          return variables;
+        }
+
+        generateStyleguide() {
+          this.generateTokensSection();
+          this.generatePrimitivesSection();
+        }
+
+        generateTokensSection() {
+          const container = document.getElementById("tokens-content");
+          const sections = this.categorizeTokens(this.tokens);
+
+          Object.entries(sections).forEach(([category, vars]) => {
+            if (vars.length === 0) return;
+
+            const section = document.createElement("div");
+            section.innerHTML = `<h3>${this.getCategoryTitle(category)}</h3>`;
+
+            const content = document.createElement("div");
+            if (
+              category === "colors" ||
+              category === "breakpoints" ||
+              category === "spacing" ||
+              category === "borders"
+            ) {
+              content.setAttribute("data-layout", "autogrid");
+              content.setAttribute("data-gap", "s");
+            }
+
+            // Pour les catégories typographiques, regrouper dans un seul token-demo
+            if (
+              category === "fontFamilies" ||
+              category === "fontWeights" ||
+              category === "fontSizes" ||
+              category === "lineHeights"
+            ) {
+              const groupDemo = document.createElement("div");
+              groupDemo.className = "token-demo";
+
+              vars.forEach(([name, value]) => {
+                const typoSample = this.createTypoSample(name, value, category);
+                groupDemo.appendChild(typoSample);
+              });
+
+              content.appendChild(groupDemo);
+            } else {
+              vars.forEach(([name, value]) => {
+                content.appendChild(
+                  this.createTokenDemo(name, value, category)
+                );
+              });
+            }
+
+            section.appendChild(content);
+            container.appendChild(section);
+          });
+        }
+
+        generatePrimitivesSection() {
+          const container = document.getElementById("primitives-content");
+          const sections = this.categorizeTokens(this.primitives);
+
+          Object.entries(sections).forEach(([category, vars]) => {
+            if (vars.length === 0) return;
+
+            const section = document.createElement("div");
+            section.innerHTML = `<h3>${this.getCategoryTitle(category)}</h3>`;
+
+            const content = document.createElement("div");
+            if (
+              category === "colors" ||
+              category === "breakpoints" ||
+              category === "spacing" ||
+              category === "borders"
+            ) {
+              content.setAttribute("data-layout", "autogrid");
+              content.setAttribute("data-gap", "s");
+            }
+
+            // Pour les catégories typographiques, regrouper dans un seul token-demo
+            if (
+              category === "fontFamilies" ||
+              category === "fontWeights" ||
+              category === "fontSizes" ||
+              category === "lineHeights"
+            ) {
+              const groupDemo = document.createElement("div");
+              groupDemo.className = "token-demo";
+
+              vars.forEach(([name, value]) => {
+                const typoSample = this.createTypoSample(
+                  name,
+                  value,
+                  category,
+                  true
+                );
+                groupDemo.appendChild(typoSample);
+              });
+
+              content.appendChild(groupDemo);
+            } else {
+              vars.forEach(([name, value]) => {
+                content.appendChild(
+                  this.createTokenDemo(name, value, category, true)
+                );
+              });
+            }
+
+            section.appendChild(content);
+            container.appendChild(section);
+          });
+        }
+
+        categorizeTokens(tokens) {
+          const categories = {
+            colors: [],
+            breakpoints: [],
+            spacing: [],
+            fontFamilies: [],
+            fontWeights: [],
+            fontSizes: [],
+            lineHeights: [],
+            borders: [],
+            other: [],
+          };
+
+          Object.entries(tokens).forEach(([name, value]) => {
+            if (
+              name.includes("color") ||
+              name.includes("surface") ||
+              name.includes("primary") ||
+              name.includes("accent") ||
+              name.includes("error") ||
+              name.includes("success") ||
+              name.includes("warning") ||
+              name.includes("info") ||
+              name.includes("layer-") ||
+              name.includes("link") ||
+              name.includes("selection") ||
+              name.includes("background") ||
+              name.startsWith("--on-") ||
+              name.includes("checkable")
+            ) {
+              categories.colors.push([name, value]);
+            } else if (
+              name === "--md" ||
+              name === "--lg" ||
+              name === "--xl" ||
+              name === "--xxl"
+            ) {
+              categories.breakpoints.push([name, value]);
+            } else if (name.includes("line-height")) {
+              categories.lineHeights.push([name, value]);
+            } else if (name.includes("spacing") && !name.includes("gap")) {
+              categories.spacing.push([name, value]);
+            } else if (
+              name.includes("font-base") ||
+              name.includes("font-mono") ||
+              name.includes("font-poppins")
+            ) {
+              categories.fontFamilies.push([name, value]);
+            } else if (name.includes("font-weight")) {
+              categories.fontWeights.push([name, value]);
+            } else if (name.includes("text-")) {
+              categories.fontSizes.push([name, value]);
+            } else if (name.startsWith("--radius-")) {
+              categories.borders.push([name, value]);
+            } else {
+              categories.other.push([name, value]);
+            }
+          });
+
+          return categories;
+        }
+
+        getCategoryTitle(category) {
+          const titles = {
+            colors: "Couleurs",
+            lineHeights: "Hauteurs de lignes",
+            breakpoints: "Breakpoints",
+            spacing: "Espacements",
+            fontFamilies: "Familles de police",
+            fontWeights: "Graisses de police",
+            fontSizes: "Tailles de texte",
+            borders: "Border-radius",
+            other: "Autres",
+          };
+          return titles[category] || "Divers";
+        }
+
+        createTokenDemo(name, value, category, showValue = false) {
+          const demo = document.createElement("div");
+          demo.className = "token-demo";
+
+          if (category === "colors") {
+            demo.innerHTML = `
+              <div class="color-swatch" style="background-color: var(${name})"></div>
+              <div class="variable-name">${name}</div>
+            `;
+          } else if (category === "spacing") {
+            demo.innerHTML = `
+              <div class="spacing-ruler" style="width: var(${name})"></div>
+              <div class="variable-name">${name}${
+              showValue ? ` - ${value}` : ""
+            }</div>
+            `;
+          } else if (category === "breakpoints") {
+            // Calculer la valeur en pixels (rem * 16)
+            const remValue = parseFloat(value.replace("rem", ""));
+            const pxValue = remValue * 16;
+            const displayValue = showValue ? ` - ${value} - ${pxValue}px` : ``;
+
+            demo.innerHTML = `
+              <div class="variable-name">${name}${displayValue}</div>
+            `;
+          } else {
+            demo.innerHTML = `
+              <div class="variable-name">${name}${
+              showValue ? ` - ${value}` : ""
+            }</div>
+            `;
+          }
+
+          return demo;
+        }
+
+        createTypoSample(name, value, category, showValue = false) {
+          const sample = document.createElement("div");
+          sample.className = "typo-sample";
+
+          const isLargeFont =
+            name.includes("text-48") ||
+            name.includes("text-64") ||
+            name.includes("text-80");
+
+          let styleProperty = "font-size";
+          if (category === "fontWeights") {
+            styleProperty = "font-weight";
+          } else if (category === "fontFamilies") {
+            styleProperty = "font-family";
+          } else if (category === "lineHeights") {
+            styleProperty = "line-height";
+          }
+
+          sample.innerHTML = `
+            <div style="${styleProperty}: var(${name})" ${
+            isLargeFont ? 'data-large="true"' : ""
+          }>
+              <span class="variable-name">${name}</span>${
+            showValue ? ` - ${value}` : ""
+          } — Exemple de texte
+            </div>
+          `;
+
+          return sample;
+        }
+
+        hideLoading() {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("content").style.display = "grid";
+        }
+
+        showError(message) {
+          document.getElementById("loading").style.display = "none";
+          const errorDiv = document.getElementById("error");
+          errorDiv.innerHTML = `<div class="error">${message}</div>`;
+          errorDiv.style.display = "block";
+        }
+      }
+
+      // Démarrage automatique
+      new StyleguideGenerator();
+    </script>
+  </body>
+</html>

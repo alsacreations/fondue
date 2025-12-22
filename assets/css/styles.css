@@ -1,0 +1,34 @@
+/* ----------------------------------
+ * Styles de base du projet
+ * ----------------------------------
+ */
+
+/* Modificateurs de Layouts */
+[data-layout*="boxed"] {
+  --boxed-max: 96rem; /* 1536px */
+}
+
+/* Base */
+body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-base);
+  font-size: var(--text-m);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Titres */
+.title-l {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.title-m {
+  font-size: var(--text-m);
+  font-weight: var(--font-weight-semibold);
+}
+
+.title-s {
+  font-size: var(--text-s);
+  font-weight: var(--font-weight-semibold);
+}

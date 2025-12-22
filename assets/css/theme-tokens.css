@@ -1,0 +1,94 @@
+/* ----------------------------------
+ * Theme-tokens, généré par primary.alsacreations.com
+ * Surcouche de theme.css
+ * Configuration :
+ * - Couleur primaire : gray
+ * - Theme : light et dark
+ * - Typographie responsive : oui
+ * - Espacements responsive : oui
+ * ----------------------------------
+ */
+:root {
+  /* Theme (color-scheme) */
+  color-scheme: light dark;
+
+  &[data-theme="light"] {
+  color-scheme: light;
+  }
+
+  &[data-theme="dark"] {
+  color-scheme: dark;
+  }
+
+  /* Couleur primaire */
+  --primary: var(--color-gray-500);
+  --on-primary: var(--color-white);
+  --primary-lighten: oklch(from var(--primary) calc(l * 1.2) c h);
+  --primary-darken: oklch(from var(--primary) calc(l * 0.8) c h);
+
+  /* Couleur d'accent */
+  --accent: light-dark(var(--primary), var(--primary-lighten));
+  --accent-invert: light-dark(var(--primary-lighten), var(--primary));
+
+  /* Surface du document */
+  --surface: light-dark(var(--color-white), var(--color-gray-900));
+  --on-surface: light-dark(var(--color-gray-900), var(--color-gray-100));
+
+  /* Niveaux de profondeur */
+  --layer-1: light-dark(var(--color-gray-50), var(--color-gray-800));
+  --layer-2: light-dark(var(--color-gray-100), var(--color-gray-700));
+  --layer-3: light-dark(var(--color-gray-200), var(--color-gray-600));
+
+  /* Interactions */
+  --link: light-dark(var(--primary), var(--primary-lighten));
+  --link-hover: light-dark(var(--primary-darken), var(--primary));
+  --link-active: light-dark(var(--primary-darken), var(--primary));
+
+  /* Couleur de sélection */
+  --selection: light-dark(var(--primary-lighten), var(--primary-darken));
+
+  /* États d'alerte */
+  --warning: light-dark(var(--color-warning-500), var(--color-warning-300));
+  --error: light-dark(var(--color-error-500), var(--color-error-300));
+  --success: light-dark(var(--color-success-500), var(--color-success-300));
+  --info: light-dark(var(--color-info-500), var(--color-info-300));
+
+  /* Bordures */
+  --border-light: var(--color-gray-400);
+  --border-medium: var(--color-gray-600);
+
+  /* Tailles de police */
+  --text-s: var(--text-14);
+  --text-m: clamp(var(--text-16), 0.9565rem + 0.2174vw, var(--text-18));
+  --text-l: clamp(var(--text-18), 1.0761rem + 0.2174vw, var(--text-20));
+  --text-xl: clamp(var(--text-20), 0.957rem + 1.3043vw, var(--text-32));
+  --text-2xl: clamp(var(--text-24), 1.2065rem + 1.3043vw, var(--text-36));
+  --text-3xl: clamp(var(--text-32), 1.609rem + 1.7391vw, var(--text-48));
+  --text-4xl: clamp(var(--text-48), 2.1818rem + 3.6364vw, var(--text-80));
+
+  /* Hauteurs de lignes */
+  --line-height-s: clamp(var(--line-height-20), 1.1522rem + 0.4348vw, var(--line-height-24));
+  --line-height-m: clamp(var(--line-height-24), 1.4022rem + 0.4348vw, var(--line-height-28));
+  --line-height-2xl: clamp(var(--line-height-32), 1.9022rem + 0.4348vw, var(--line-height-36));
+  --line-height-5xl: clamp(var(--line-height-40), 1.8152rem + 3.0435vw, var(--line-height-68));
+  --line-height-4xl: clamp(var(--line-height-40), 2.1087rem + 1.7391vw, var(--line-height-56));
+  --line-height-6xl: clamp(var(--line-height-80), 4.5109rem + 2.1739vw, var(--line-height-100));
+
+  /* Espacements */
+  --spacing-xs: var(--spacing-4);
+  --spacing-s: clamp(var(--spacing-8), 0.2955rem + 0.9091vw, var(--spacing-16));
+  --spacing-m: clamp(var(--spacing-16), 0.5909rem + 1.8182vw, var(--spacing-32));
+  --spacing-l: clamp(var(--spacing-24), 0.8864rem + 2.2727vw, var(--spacing-48));
+  --spacing-xl: clamp(var(--spacing-32), 0.7727rem + 5.4545vw, var(--spacing-80));
+
+  /* Tokens complémentaires */
+  --form-control-background: light-dark(var(--color-gray-200), var(--color-gray-700));
+  --on-form-control: light-dark(var(--color-gray-900), var(--color-gray-100));
+  --form-control-spacing: var(--spacing-12) var(--spacing-16);
+  --form-control-border-width: 1px;
+  --form-control-border-color: var(--color-gray-400);
+  --form-control-border-radius: var(--radius-16);
+  --checkables-border-color: var(--color-gray-400);
+  --checkable-size: 1.25em;
+}
+
