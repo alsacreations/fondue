@@ -21,11 +21,30 @@ const previewSize = document.getElementById("preview-size")
 const appWorkspace = document.getElementById("app-workspace")
 const generateBtn = document.getElementById("btn-generate")
 const exportStatus = document.getElementById("export-status")
+const loadExampleBtn = document.getElementById("btn-load-example")
 
 // --- Initialization ---
 function init() {
   setupDragDrop()
   setupPreviewControls()
+  setupExampleLoader()
+}
+
+function setupExampleLoader() {
+  if (!loadExampleBtn) return
+  loadExampleBtn.addEventListener("click", async () => {
+    try {
+      // Show loading state if needed, or just fetch
+      const response = await fetch("fonts/Roboto-VariableFont_wdth,wght.ttf")
+      if (!response.ok)
+        throw new Error("Impossible de charger la police d'exemple")
+      const buffer = await response.arrayBuffer()
+      await loadFontBuffer(buffer, "Roboto-VariableFont_wdth,wght.ttf")
+    } catch (error) {
+      console.error("Erreur chargement exemple:", error)
+      alert("Erreur lors du chargement de l'exemple Roboto.")
+    }
+  })
 }
 
 // --- Font Loading Logic ---
