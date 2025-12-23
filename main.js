@@ -331,11 +331,12 @@ function setupPreviewControls() {
 
 let hbSubsetExports = null
 
-import hbSubsetWasmUrl from "./assets/vendors/hb-subset.wasm?url"
-
 async function loadHarfbuzzSubset() {
   if (hbSubsetExports) return hbSubsetExports
-  const response = await fetch(hbSubsetWasmUrl)
+  // In Vite, files in 'public' are served at the root.
+  // With base: '/caractere/', we should use a relative path or the full base path.
+  // 'vendors/...' works if we are at the root of the app.
+  const response = await fetch("vendors/hb-subset.wasm")
   const result = await WebAssembly.instantiateStreaming(response)
   hbSubsetExports = result.instance.exports
   return hbSubsetExports

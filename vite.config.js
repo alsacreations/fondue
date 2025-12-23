@@ -5,7 +5,7 @@
  */
 
 export default {
-  base: "/caractere/",
+  base: "./",
   build: {
     outDir: "dist",
     assetsDir: "assets",
