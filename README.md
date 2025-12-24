@@ -1,6 +1,6 @@
-# Caractère
+# Fondue
 
-**Caractère** est un outil web moderne pour optimiser vos polices de caractères (subsetting) et les convertir au format WOFF2, standard actuel pour le web. Il est conçu pour être simple, rapide et respectueux de la vie privée, fonctionnant entièrement dans votre navigateur.
+**Fondue** est un outil web moderne pour optimiser vos polices de caractères (subsetting) et les convertir au format WOFF2, standard actuel pour le web. Il est conçu pour être simple, rapide et respectueux de la vie privée, fonctionnant entièrement dans votre navigateur.
 
 ## 🚀 Fonctionnalités
 
@@ -14,7 +14,7 @@
 
 ## 🌐 Démo
 
-L'outil est accessible en ligne ici : **<https://alsacreations.github.io/caractere/>**
+L'outil est accessible en ligne ici : **[fondue.alsacreations.com](https://fondue.alsacreations.com)**
 
 ## 🛠️ Installation et Développement local
 
