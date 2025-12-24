@@ -355,7 +355,10 @@ async function loadHarfbuzzSubset() {
   // In Vite, files in 'public' are served at the root.
   // With base: '/caractere/', we should use a relative path or the full base path.
   // 'vendors/...' works if we are at the root of the app.
-  const response = await fetch("vendors/hb-subset.wasm")
+  // Using import.meta.env.BASE_URL ensures the path is correct regardless of deployment path.
+  const response = await fetch(
+    import.meta.env.BASE_URL + "vendors/hb-subset.wasm",
+  )
   const result = await WebAssembly.instantiateStreaming(response)
   hbSubsetExports = result.instance.exports
   return hbSubsetExports
