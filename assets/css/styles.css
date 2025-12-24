@@ -62,6 +62,11 @@ body {
   color: var(--color-gray-500);
 }
 
+.discrete {
+  font-size: var(--text-s);
+  color: var(--color-gray-500);
+}
+
 /* Page Structure */
 .header {
   padding-block: var(--spacing-xl) var(--spacing-l);
@@ -220,44 +225,8 @@ h4.section-title {
   margin-top: var(--spacing-s);
 }
 
-/* Buttons */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-s);
-  padding: var(--spacing-s) var(--spacing-l);
   border-radius: var(--radius-12);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--text-m);
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  text-decoration: none;
-  line-height: 1;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: var(--on-primary);
-  box-shadow: 0 4px 6px -1px oklch(from var(--primary) l c h / 0.3);
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-darken);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px oklch(from var(--primary) l c h / 0.4);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-primary:disabled {
-  background-color: var(--color-gray-300);
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
 }
 
 .width-100 {
@@ -439,6 +408,7 @@ h4.section-title {
 }
 
 .btn-github {
+  gap: var(--spacing-xs);
   --button-background-color: oklch(51.33% 0.18 256.37);
   --button-background-color-hover: oklch(
     from oklch(51.33% 0.18 256.37) calc(l * 0.9) c h
