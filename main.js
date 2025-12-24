@@ -307,7 +307,7 @@ function generateFontFaceCSS() {
 
     fontFaceCSS = `@font-face {
   font-family: "${fontFamily} Variable";
-  src: url("assets/fonts/subset-${baseName}.woff2") format("woff2") tech("variations"), url("assets/fonts/subset-${baseName}.woff2") format("woff2-variations");
+  src: url("assets/fonts/optim-${baseName}.woff2") format("woff2") tech("variations"), url("assets/fonts/optim-${baseName}.woff2") format("woff2-variations");
   font-weight: ${weightRange};
   font-display: swap;
 }`
@@ -323,7 +323,7 @@ function generateFontFaceCSS() {
 
     fontFaceCSS = `@font-face {
   font-family: "${fontFamily}";
-  src: url("assets/fonts/subset-${baseName}.woff2") format("woff2");
+  src: url("assets/fonts/optim-${baseName}.woff2") format("woff2");
   font-weight: ${fontWeight};
   font-style: ${fontStyle};
   font-display: swap;
@@ -331,7 +331,7 @@ function generateFontFaceCSS() {
   }
 
   // Generate Preload HTML
-  const preloadHTML = `<link rel="preload" href="assets/fonts/subset-${baseName}.woff2" as="font" type="font/woff2" crossorigin="anonymous" />`
+  const preloadHTML = `<link rel="preload" href="assets/fonts/optim-${baseName}.woff2" as="font" type="font/woff2" crossorigin="anonymous" />`
 
   // Display the CSS code
   codeElement.textContent = fontFaceCSS
@@ -548,7 +548,7 @@ async function generateSubset() {
     const subsetBuffer = await runHarfbuzzSubsetting(fontBuffer, ranges)
 
     // Compress to WOFF2
-    exportStatus.innerHTML = "Compression WOFF2..."
+    exportStatus.innerHTML = "Compression WOFF2…"
     const woff2Buffer = await compress(subsetBuffer)
 
     // Display success message
@@ -557,7 +557,7 @@ async function generateSubset() {
     // Trigger download
     triggerDownload(
       woff2Buffer,
-      `subset-${fontFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")}.woff2`,
+      `optim-${fontFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")}.woff2`,
     )
 
     // Update message after download
