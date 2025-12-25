@@ -7,6 +7,7 @@ import { compress, decompress } from "woff2-encoder"
 
 // --- State ---
 let fontBuffer = null
+let originalFileSize = 0
 let fontFileName = "custom-font.ttf"
 let fontObj = null // OpenType.js font object
 let axes = {}
@@ -72,7 +73,8 @@ async function loadFontBuffer(buffer, name) {
     const designer = fontObj.names.designer?.en || "Unknown"
 
     // File info
-    const fileSizeKB = Math.round(buffer.byteLength / 1024)
+    originalFileSize = buffer.byteLength
+    const fileSizeKB = Math.round(originalFileSize / 1024)
     const fileFormat = name.split(".").pop().toUpperCase()
 
     // Variable font detection
@@ -300,7 +302,9 @@ function generateFontFaceCSS() {
   // Split by "_" to remove variable axis parts, and use -opti suffix
   // e.g. "Merriweather-VariableFont_opsz,wdth,wght" -> "Merriweather-VariableFont"
   const cleanBaseName = originalBaseName.split("_")[0]
-  const finalFileName = `${cleanBaseName}-opti.woff2`
+  const finalFileName = cleanBaseName.endsWith("-opti")
+    ? `${cleanBaseName}.woff2`
+    : `${cleanBaseName}-opti.woff2`
 
   // Check if variable font
   const fvar = fontObj.tables.fvar
@@ -515,7 +519,7 @@ async function updateStats() {
       return
     }
 
-    const originalSize = fontBuffer.byteLength
+    const originalSize = originalFileSize
     const subsetSize = subsetBuffer.byteLength
     // Estimation WOFF2 (~50% du TTF)
     const estimatedWoff2Size = Math.round(subsetSize * 0.5)
@@ -577,7 +581,9 @@ async function generateSubset() {
       "",
     )
     const cleanBaseName = originalBaseName.split("_")[0]
-    const finalFileName = `${cleanBaseName}-opti.woff2`
+    const finalFileName = cleanBaseName.endsWith("-opti")
+      ? `${cleanBaseName}.woff2`
+      : `${cleanBaseName}-opti.woff2`
 
     triggerDownload(woff2Buffer, finalFileName)
   } catch (err) {

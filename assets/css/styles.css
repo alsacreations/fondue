@@ -267,13 +267,13 @@ h4.section-title {
 
 /* Checkbox Card */
 .checkbox-card {
-  background: var(--surface);
+  background: var(--layer-1);
   border: 1px solid var(--border-light);
   padding: var(--spacing-8);
   border-radius: var(--radius-12);
   display: flex;
   align-items: center;
-  gap: var(--spacing-s);
+  gap: var(--spacing-xs);
   cursor: pointer;
   transition: var(--transition-duration);
   transition-property: border-color, background;
