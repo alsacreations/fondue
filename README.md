@@ -4,12 +4,16 @@
 
 ## 🚀 Fonctionnalités
 
-- **Importation facile** : Support du glisser-déposer pour les fichiers `.ttf`, `.otf`, `.woff` et `.woff2`.
+- **Importation facile** : Support du glisser-déposer pour les fichiers `.ttf`, `.otf`, `.woff` et `.woff2` (décompression automatique pour ces derniers).
+- **Collection intégrée** : Accès direct à une sélection de polices libres déjà optimisées et prêtes à l'emploi.
 - **Analyse détaillée** : Affiche les métadonnées de la police (nom, format, poids, nombre de glyphes, fonderie, etc.).
 - **Support des Fontes Variables** : Détection automatique des axes de variation (poids, largeur, etc.) avec prévisualisation interactive.
 - **Subsetting (Jeu de caractères)** : Réduisez la taille de vos fichiers en ne conservant que les caractères nécessaires (Latin Basic, Latin-1 Supplement, etc.).
 - **Prévisualisation en direct** : Testez le rendu de la police avec votre propre texte avant l'export.
-- **Export WOFF2** : Génération de fichiers optimisés prêts pour la production.
+- **Export intelligent** :
+  - Génération de fichiers WOFF2 optimisés.
+  - Convention de nommage propre (`Nom-opti.woff2`).
+  - Estimation précise du gain de poids.
 - **100% Client-side** : Vos fichiers de police ne sont jamais envoyés sur un serveur. Tout le traitement se fait localement dans votre navigateur via WebAssembly.
 
 ## 🌐 Démo
@@ -62,6 +66,7 @@ Ce projet utilise [Vite](https://vitejs.dev/) comme outil de build.
 - **JavaScript (ES6+)** : Logique applicative.
 - **[Vite](https://vitejs.dev/)** : Bundler et serveur de développement ultra-rapide.
 - **[opentype.js](https://opentype.js.org/)** : Parsing et analyse des fichiers de police.
+- **[woff2-encoder](https://github.com/google/woff2)** : Compression et décompression WOFF2.
 - **[harfbuzzjs](https://github.com/harfbuzz/harfbuzzjs)** : Moteur de rendu et de subsetting de texte haute performance (via WebAssembly).
 
 ## 📄 Licence

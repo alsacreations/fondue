@@ -98,7 +98,7 @@ footer {
 /* Sections & Cards */
 .section-import {
   display: grid;
-  margin-bottom: var(--spacing-l);
+  margin-bottom: var(--spacing-s);
 }
 
 .section-card {
@@ -437,4 +437,27 @@ h4.section-title {
   text-decoration: underline;
   cursor: pointer;
   font-size: var(--text-s);
+}
+
+.section-collection {
+  margin-bottom: var(--spacing-l);
+}
+
+.collection-details {
+  --details-border-radius: var(--radius-12);
+
+  width: fit-content;
+  margin-inline: auto;
+
+  & summary {
+    gap: var(--spacing-8);
+  }
+}
+
+.collection-item-btn {
+  --button-background-color: var(--color-white);
+  --button-background-color-hover: var(--color-gray-100);
+  --button-border-width: 0;
+
+  width: 100%;
 }

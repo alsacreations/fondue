@@ -24,12 +24,14 @@ const appWorkspace = document.getElementById("app-workspace")
 const generateBtn = document.getElementById("btn-generate")
 const exportStatus = document.getElementById("export-status")
 const loadExampleBtn = document.getElementById("btn-load-example")
+const collectionList = document.getElementById("collection-list")
 
 // --- Initialization ---
 function init() {
   setupDragDrop()
   setupPreviewControls()
   setupExampleLoader()
+  setupCollectionLoader()
 }
 
 function setupExampleLoader() {
@@ -47,6 +49,54 @@ function setupExampleLoader() {
       alert("Erreur lors du chargement de l'exemple Roboto.")
     }
   })
+}
+
+async function setupCollectionLoader() {
+  if (!collectionList) return
+
+  try {
+    const response = await fetch("collection/manifest.json")
+    if (!response.ok) return
+    const files = await response.json()
+
+    files.forEach((filename) => {
+      // Create FontFace for preview
+      const fontName = filename.replace("-opti.woff2", "").replace(/-/g, " ")
+      const fontFaceName = `Preview_${filename}`
+      const fontUrl = `collection/${filename}`
+
+      const fontFace = new FontFace(fontFaceName, `url(${fontUrl})`)
+      fontFace
+        .load()
+        .then((loadedFace) => {
+          document.fonts.add(loadedFace)
+        })
+        .catch((err) => console.error("Failed to load preview font:", err))
+
+      // Create list item
+      const li = document.createElement("li")
+      const button = document.createElement("button")
+      button.className = "collection-item-btn"
+      button.style.fontFamily = `"${fontFaceName}", sans-serif`
+      button.textContent = fontName
+      button.type = "button"
+
+      button.addEventListener("click", () => {
+        // Trigger download directly
+        const a = document.createElement("a")
+        a.href = fontUrl
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+      })
+
+      li.appendChild(button)
+      collectionList.appendChild(li)
+    })
+  } catch (error) {
+    console.warn("Collection not available or manifest missing", error)
+  }
 }
 
 // --- Font Loading Logic ---
