@@ -295,8 +295,12 @@ function generateFontFaceCSS() {
 
   // Generate @font-face CSS for the optimized WOFF2 file
   const fontFamily = fontObj.names.fontFamily?.en || "CustomFont"
-  const sanitizedFileName = fontFileName.replace(/\s+/g, "-").toLowerCase()
-  const baseName = sanitizedFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")
+  // Remove extension
+  const originalBaseName = fontFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")
+  // Split by "_" to remove variable axis parts, and use -opti suffix
+  // e.g. "Merriweather-VariableFont_opsz,wdth,wght" -> "Merriweather-VariableFont"
+  const cleanBaseName = originalBaseName.split("_")[0]
+  const finalFileName = `${cleanBaseName}-opti.woff2`
 
   // Check if variable font
   const fvar = fontObj.tables.fvar
@@ -313,7 +317,7 @@ function generateFontFaceCSS() {
 
     fontFaceCSS = `@font-face {
   font-family: "${fontFamily} Variable";
-  src: url("assets/fonts/optim-${baseName}.woff2") format("woff2") tech("variations"), url("assets/fonts/optim-${baseName}.woff2") format("woff2-variations");
+  src: url("assets/fonts/${finalFileName}") format("woff2") tech("variations"), url("assets/fonts/${finalFileName}") format("woff2-variations");
   font-weight: ${weightRange};
   font-display: swap;
 }`
@@ -329,7 +333,7 @@ function generateFontFaceCSS() {
 
     fontFaceCSS = `@font-face {
   font-family: "${fontFamily}";
-  src: url("assets/fonts/optim-${baseName}.woff2") format("woff2");
+  src: url("assets/fonts/${finalFileName}") format("woff2");
   font-weight: ${fontWeight};
   font-style: ${fontStyle};
   font-display: swap;
@@ -337,7 +341,7 @@ function generateFontFaceCSS() {
   }
 
   // Generate Preload HTML
-  const preloadHTML = `<link rel="preload" href="assets/fonts/optim-${baseName}.woff2" as="font" type="font/woff2" crossorigin="anonymous" />`
+  const preloadHTML = `<link rel="preload" href="assets/fonts/${finalFileName}" as="font" type="font/woff2" crossorigin="anonymous" />`
 
   // Display the CSS code
   codeElement.textContent = fontFaceCSS
@@ -567,14 +571,15 @@ async function generateSubset() {
     exportStatus.innerHTML = "Compression WOFF2…"
     const woff2Buffer = await compress(subsetBuffer)
 
-    // Display success message
-    exportStatus.innerHTML = `<p class="text-success">✓ Subset WOFF2 créé avec succès !</p>`
-
     // Trigger download
-    triggerDownload(
-      woff2Buffer,
-      `optim-${fontFileName.replace(/\.(ttf|otf|woff|woff2)$/i, "")}.woff2`,
+    const originalBaseName = fontFileName.replace(
+      /\.(ttf|otf|woff|woff2)$/i,
+      "",
     )
+    const cleanBaseName = originalBaseName.split("_")[0]
+    const finalFileName = `${cleanBaseName}-opti.woff2`
+
+    triggerDownload(woff2Buffer, finalFileName)
   } catch (err) {
     console.error(err)
     exportStatus.innerHTML = `<span class="text-error">Erreur: ${err.message}</span>`
