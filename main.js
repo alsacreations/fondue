@@ -167,7 +167,7 @@ async function loadFontBuffer(buffer, name) {
           <dd>${charCount}</dd>
         </div>
         <div class="font-info-item">
-          <dt>Manufacturer</dt>
+          <dt>Fonderie</dt>
           <dd>${manufacturer}</dd>
         </div>
       </dl>

@@ -2,6 +2,8 @@
 
 **Fondue** est un outil web moderne pour optimiser vos polices de caractères (subsetting) et les convertir au format WOFF2, standard actuel pour le web. Il est conçu pour être simple, rapide et respectueux de la vie privée, fonctionnant entièrement dans votre navigateur.
 
+Pour plus d'informations sur l'usage des polices pour le web, consultez l'article détaillé d'Alsacréations ["Optimisez vos polices web"](https://www.alsacreations.com/article/lire/1741-Optimisez-vos-polices-web.html).
+
 ## 🚀 Fonctionnalités
 
 - **Importation facile** : Support du glisser-déposer pour les fichiers `.ttf`, `.otf`, `.woff` et `.woff2` (décompression automatique pour ces derniers).
