@@ -50,6 +50,7 @@ body {
     "wght" 700,
     "wdth" 100;
   line-height: 1.1;
+  text-align: center;
 }
 
 .title-m {
@@ -83,6 +84,17 @@ body {
 .header p {
   font-size: var(--text-l);
   color: var(--color-gray-600);
+}
+
+.logo {
+  width: 200px;
+  height: 50px;
+  margin-inline: auto;
+
+  @media (width >= 48rem) {
+    width: 400px;
+    height: 100px;
+  }
 }
 
 main {
