@@ -115,6 +115,13 @@ async function loadFontBuffer(buffer, name) {
     }
     console.log("Font loaded:", fontObj)
 
+    // --- LICENSE CHECK ---
+    if (!validateLicense(fontObj)) {
+      throw new Error(
+        "Ce fichier ne semble pas être une police libre (OFL, Apache, MIT, etc.). Vérifiez les métadonnées de licence.",
+      )
+    }
+
     // Extract comprehensive metadata
     const fontName =
       fontObj.names.fullName?.en || fontObj.names.fontFamily?.en || name
@@ -665,3 +672,52 @@ window.addEventListener("DOMContentLoaded", () => {
   renderUnicodeCheckboxes()
   generateBtn.addEventListener("click", generateSubset)
 })
+
+
+// --- License Validation ---
+function validateLicense(fontObj) {
+  // Extract relevant metadata fields
+  // Handle cases where names might be missing or in different languages (defaulting to 'en' or first available)
+  const getAnyLang = (obj) => {
+    if (!obj) return ""
+    return obj.en || Object.values(obj)[0] || ""
+  }
+
+  const license = getAnyLang(fontObj.names.license)
+  const licenseURL = getAnyLang(fontObj.names.licenseURL)
+  const copyright = getAnyLang(fontObj.names.copyright)
+  const manufacturer = getAnyLang(fontObj.names.manufacturer)
+
+  const combinedMetadata = (
+    license +
+    " " +
+    licenseURL +
+    " " +
+    copyright +
+    " " +
+    manufacturer
+  ).toLowerCase()
+
+  // STRICT Whitelist of keywords indicating open source / free usage
+  const openSourceKeywords = [
+    "open font license",
+    "ofl",
+    "sil", // SIL Open Font License
+    "apache license",
+    "apache 2",
+    "mit license",
+    "gpl", // General Public License (often with font exception)
+    "creative commons",
+    "cc0",
+    "cc-by",
+    "cc by",
+    "pd", // Public Domain
+    "public domain",
+    "ubuntu font licence",
+    "wtfpl",
+    "zlib",
+  ]
+
+  // Check if any keyword matches
+  return openSourceKeywords.some((keyword) => combinedMetadata.includes(keyword))
+}
