@@ -18,6 +18,14 @@
     <link
       rel="stylesheet"
       href="assets/css/app.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "opentype.js": "./public/vendors/opentype.js",
+          "woff2-encoder": "https://unpkg.com/woff2-encoder@2.0.0/dist/woff2-encoder.mjs"
+        }
+      }
+    </script>
   </head>
   <body data-layout="boxed">
     <header class="header">
@@ -118,7 +126,9 @@
           </div>
 
           <!-- Variable Axes -->
-          <section data-anime="slide-left entry">
+          <section
+            id="section-axes"
+            data-anime="slide-left entry">
             <h2 class="title-m section-title">Axes de variation</h2>
             <p class="section-description">
               Ajustez les curseurs pour prévisualiser.
@@ -136,7 +146,9 @@
           </section>
 
           <!-- Subsetting Ranges -->
-          <section data-anime="slide-left entry">
+          <section
+            id="section-subsetting"
+            data-anime="slide-left entry">
             <h2 class="title-m section-title">
               Jeu de caractères (Subsetting)
             </h2>
@@ -216,6 +228,7 @@
             </section>
 
             <section
+              id="section-export"
               class="export-section"
               data-anime="slide-right entry">
               <h2 class="title-m section-title">Exporter</h2>

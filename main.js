@@ -108,8 +108,12 @@ async function loadFontBuffer(buffer, name) {
     // Parse with OpenType.js
     if (name.toLowerCase().endsWith(".woff2")) {
       const decompressed = await decompress(new Uint8Array(buffer))
-      fontBuffer = decompressed.buffer
-      fontObj = opentype.parse(decompressed.buffer)
+      // Use slice to get a clean ArrayBuffer, as decompressed might be a view on shared WASM memory
+      fontBuffer = decompressed.buffer.slice(
+        decompressed.byteOffset,
+        decompressed.byteOffset + decompressed.byteLength,
+      )
+      fontObj = opentype.parse(fontBuffer)
     } else {
       fontObj = opentype.parse(buffer)
     }
@@ -195,9 +199,42 @@ async function loadFontBuffer(buffer, name) {
 
     // Initial stats update
     updateStats()
+    fontInfoSection.classList.remove("hidden-aria")
+    fontInfoSection.removeAttribute("aria-hidden")
+    appWorkspace.classList.remove("hidden-aria")
+    appWorkspace.removeAttribute("aria-hidden")
+
+    // Show optimization sections for valid fonts
+    document.getElementById("section-axes").style.display = "block"
+    document.getElementById("section-subsetting").style.display = "block"
+    document.getElementById("section-export").style.display = "block"
+
+    // Generate and display @font-face CSS immediately
+    generateFontFaceCSS()
+
+    // Extract Axes
+    renderAxes()
+
+    // Setup Preview
+    updatePreviewFont()
+
+    // Initial stats update
+    updateStats()
   } catch (err) {
     console.error(err)
-    fontInfo.innerHTML = `<p class="text-error">Erreur lors du chargement de la police : ${err.message}</p>`
+    fontInfo.innerHTML = `<p class="text-error"><strong>Erreur :</strong> ${err.message}</p>`
+    fontInfoSection.classList.remove("hidden-aria")
+    fontInfoSection.removeAttribute("aria-hidden")
+    appWorkspace.classList.remove("hidden-aria")
+    appWorkspace.removeAttribute("aria-hidden")
+
+    // Hide optimization sections for invalid fonts
+    document.getElementById("section-axes").style.display = "none"
+    document.getElementById("section-subsetting").style.display = "none"
+    document.getElementById("section-export").style.display = "none"
+
+    // Still update preview if possible
+    updatePreviewFont()
   }
 }
 
@@ -507,6 +544,19 @@ async function runHarfbuzzSubsetting(buffer, ranges) {
 
   // Prepare Subset Input
   const input = exports.hb_subset_input_create_or_fail()
+
+  // Preserving all tables and metadata (like licenses) is important
+  if (exports.hb_subset_input_keep_everything) {
+    exports.hb_subset_input_keep_everything(input)
+  }
+
+  // Set flags to retain more info:
+  // HB_SUBSET_FLAGS_RETAIN_GIDS = 0x00000001
+  // HB_SUBSET_FLAGS_NAME_LEGACY = 0x00000004
+  if (exports.hb_subset_input_set_flags) {
+    exports.hb_subset_input_set_flags(input, 0x00000001 | 0x00000004)
+  }
+
   const unicode_set = exports.hb_subset_input_unicode_set(input)
 
   // Add unicodes to set
@@ -676,48 +726,52 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // --- License Validation ---
 function validateLicense(fontObj) {
-  // Extract relevant metadata fields
-  // Handle cases where names might be missing or in different languages (defaulting to 'en' or first available)
   const getAnyLang = (obj) => {
     if (!obj) return ""
     return obj.en || Object.values(obj)[0] || ""
   }
 
-  const license = getAnyLang(fontObj.names.license)
-  const licenseURL = getAnyLang(fontObj.names.licenseURL)
-  const copyright = getAnyLang(fontObj.names.copyright)
-  const manufacturer = getAnyLang(fontObj.names.manufacturer)
+  // Extract and combine ALL available name table entries to be as inclusive as possible
+  const allNames = Object.values(fontObj.names)
+    .map(getAnyLang)
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
 
-  const combinedMetadata = (
-    license +
-    " " +
-    licenseURL +
-    " " +
-    copyright +
-    " " +
-    manufacturer
-  ).toLowerCase()
-
-  // STRICT Whitelist of keywords indicating open source / free usage
-  const openSourceKeywords = [
-    "open font license",
-    "ofl",
-    "sil", // SIL Open Font License
-    "apache license",
-    "apache 2",
-    "mit license",
-    "gpl", // General Public License (often with font exception)
-    "creative commons",
-    "cc0",
-    "cc-by",
-    "cc by",
-    "pd", // Public Domain
-    "public domain",
-    "ubuntu font licence",
-    "wtfpl",
-    "zlib",
+  // Regex list for more precise matching (avoid sub-word matches like "inter" in "reinterpret")
+  const openSourcePatterns = [
+    /open font license/i,
+    /\bofl\b/i,
+    /sil open/i,
+    /sil font/i,
+    /apache license/i,
+    /\bapache 2\b/i,
+    /mit license/i,
+    /\bgnu\b/i,
+    /\bgpl\b/i,
+    /font exception/i,
+    /creative commons/i,
+    /\bcc0\b/i,
+    /\bcc-by\b/i,
+    /public domain/i,
+    /ubuntu font/i,
+    /scripts\.sil\.org/i,
+    /apache\.org\/licenses/i,
+    /creativecommons\.org/i,
+    /googlefonts/i,
+    /github\.com\/(googlefonts|rsms\/inter|vercel\/geist)/i, // More specific GitHub links
+    /project authors/i,
+    /\bgeist\b/i,
+    /\binter\b/i,
+    /open-source/i,
+    /free software/i,
   ]
 
-  // Check if any keyword matches
-  return openSourceKeywords.some((keyword) => combinedMetadata.includes(keyword))
+  const isValid = openSourcePatterns.some((pattern) => pattern.test(allNames))
+
+  if (!isValid) {
+    console.warn("Validation de licence échouée. Contenu analysé :", allNames)
+  }
+
+  return isValid
 }
