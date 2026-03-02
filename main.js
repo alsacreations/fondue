@@ -11,6 +11,7 @@ let originalFileSize = 0
 let fontFileName = "custom-font.ttf"
 let fontObj = null // OpenType.js font object
 let axes = {}
+let previewIsDirty = false // Track if user edited the preview manually
 
 // --- DOM Elements ---
 const dropZone = document.getElementById("drop-zone")
@@ -453,6 +454,11 @@ function setupPreviewControls() {
   previewSize.addEventListener("input", (e) => {
     previewText.style.fontSize = e.target.value + "px"
   })
+
+  // Track manual edits
+  previewText.addEventListener("input", () => {
+    previewIsDirty = true
+  })
 }
 
 // --- Subsetting Logic ---
@@ -475,14 +481,38 @@ async function loadHarfbuzzSubset() {
   return hbSubsetExports
 }
 
-// Unicode Ranges Definitions
+// Unicode Ranges Definitions with Preview Samples
 const UNICODE_RANGES = {
-  latin: { name: "Latin Basic", range: [0x0020, 0x007f] },
-  "latin-1-supp": { name: "Latin-1 Supplement", range: [0x0080, 0x00ff] },
-  "latin-ext-a": { name: "Latin Extended-A", range: [0x0100, 0x017f] },
-  "latin-ext-b": { name: "Latin Extended-B", range: [0x0180, 0x024f] },
-  punctuation: { name: "Punctuation", range: [0x2000, 0x206f] },
-  currency: { name: "Currency Symbols", range: [0x20a0, 0x20cf] },
+  latin: {
+    name: "Latin Basic",
+    range: [0x0020, 0x007f],
+    sample: "Lorem Elsass Ipsum frau Chulia picon biere knackes duu blottkopf!?$",
+  },
+  "latin-1-supp": {
+    name: "Latin-1 Supplement",
+    range: [0x0080, 0x00ff],
+    sample: "Lorem Elsass Ipsum fraü Chulia picon bière knäckes dûû blottkopf!?$£¥¢",
+  },
+  "latin-ext-a": {
+    name: "Latin Extended-A",
+    range: [0x0100, 0x017f],
+    sample: "Āā Čč Ėė Ğğ Įį Łł Śś Žž",
+  },
+  "latin-ext-b": {
+    name: "Latin Extended-B",
+    range: [0x0180, 0x024f],
+    sample: "ƀ Ɓ Ɔ Ɛ Ƒ Ɣ Ɩ Ƙ Ɲ Ơ Ƥ Ʃ Ƭ Ư Ʋ Ƶ",
+  },
+  punctuation: {
+    name: "Punctuation",
+    range: [0x2000, 0x206f],
+    sample: "« » „ “ ” ‘ ’ — – …",
+  },
+  currency: {
+    name: "Currency Symbols",
+    range: [0x20a0, 0x20cf],
+    sample: "€ ₿ ₣ ₺ ₾ ₼ ﷼",
+  },
 }
 
 function renderUnicodeCheckboxes() {
@@ -503,8 +533,47 @@ function renderUnicodeCheckboxes() {
   // Add event listeners for live updates
   const checkboxes = container.querySelectorAll('input[name="subset"]')
   checkboxes.forEach((cb) => {
-    cb.addEventListener("change", updateStats)
+    cb.addEventListener("change", () => {
+      updateStats()
+      updatePreviewContent()
+    })
   })
+
+  // Initial update to sync preview with default checked boxes
+  updatePreviewContent()
+}
+
+function updatePreviewContent() {
+  if (previewIsDirty) return // Don't overwrite if user started typing
+
+  const checkboxes = document.querySelectorAll('input[name="subset"]:checked')
+  const activeKeys = Array.from(checkboxes).map((cb) => cb.value)
+
+  // Special logic for Elsass Ipsum versions
+  let samples = []
+
+  // If both are checked, or only Latin-1, use the accented version
+  // If only Basic Latin is checked, use the plain version
+  if (activeKeys.includes("latin-1-supp")) {
+    samples.push(UNICODE_RANGES["latin-1-supp"].sample)
+  } else if (activeKeys.includes("latin")) {
+    samples.push(UNICODE_RANGES["latin"].sample)
+  }
+
+  // Add other subsets (excluding the ones handled above)
+  activeKeys.forEach((key) => {
+    if (key !== "latin" && key !== "latin-1-supp") {
+      if (UNICODE_RANGES[key]?.sample) {
+        samples.push(UNICODE_RANGES[key].sample)
+      }
+    }
+  })
+
+  if (samples.length > 0) {
+    previewText.innerText = samples.join("\n")
+  } else {
+    previewText.innerText = "Sélectionnez des subsets pour voir les exemples."
+  }
 }
 
 async function runHarfbuzzSubsetting(buffer, ranges) {
