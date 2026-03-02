@@ -164,11 +164,11 @@ async function loadFontBuffer(buffer, name) {
         </div>
         <div class="font-info-item">
           <dt>Fonte Variable</dt>
-          <dd>${isVariableFont ? `Oui (${axesCount} axe${axesCount > 1 ? "s" : ""})` : "Non"}</dd>
+          <dd>${isVariableFont ? `✅ Oui (${axesCount} axe${axesCount > 1 ? "s" : ""})` : "❌ Non"}</dd>
         </div>
         <div class="font-info-item">
           <dt>Poids</dt>
-          <dd>${fileSizeKB} KB</dd>
+          <dd>${fileSizeKB} <abbr title="Kilo-octets">Ko</abbr></dd>
         </div>
         <div class="font-info-item">
           <dt>Format</dt>
@@ -550,6 +550,7 @@ function renderUnicodeCheckboxes() {
   Object.entries(UNICODE_RANGES).forEach(([key, data]) => {
     const label = document.createElement("label")
     label.className = "checkbox-card"
+    label.lang = "en"
     const checked = ["latin", "latin-1-supp"].includes(key) ? "checked" : ""
     label.innerHTML = `
             <input type="checkbox" name="subset" value="${key}" ${checked}>
