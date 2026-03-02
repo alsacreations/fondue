@@ -458,6 +458,8 @@ function setupPreviewControls() {
 // --- Subsetting Logic ---
 
 let hbSubsetExports = null
+let currentStatsRequestId = 0
+let statsTimeout = null
 
 async function loadHarfbuzzSubset() {
   if (hbSubsetExports) return hbSubsetExports
@@ -545,16 +547,11 @@ async function runHarfbuzzSubsetting(buffer, ranges) {
   // Prepare Subset Input
   const input = exports.hb_subset_input_create_or_fail()
 
-  // Preserving all tables and metadata (like licenses) is important
-  if (exports.hb_subset_input_keep_everything) {
-    exports.hb_subset_input_keep_everything(input)
-  }
-
-  // Set flags to retain more info:
-  // HB_SUBSET_FLAGS_RETAIN_GIDS = 0x00000001
-  // HB_SUBSET_FLAGS_NAME_LEGACY = 0x00000004
+  // On retire "keep_everything" et "RETAIN_GIDS" car ils empêchent la suppression des glyphes.
+  // Par défaut, HarfBuzz ne gardera que les glyphes nécessaires aux unicodes fournis.
   if (exports.hb_subset_input_set_flags) {
-    exports.hb_subset_input_set_flags(input, 0x00000001 | 0x00000004)
+    // On peut utiliser 0 pour les flags par défaut ou HB_SUBSET_FLAGS_NAME_LEGACY (0x00000004) pour la compatibilité
+    exports.hb_subset_input_set_flags(input, 0x00000004)
   }
 
   const unicode_set = exports.hb_subset_input_unicode_set(input)
@@ -611,53 +608,79 @@ async function updateStats() {
   if (!fontBuffer) return
   const statsContainer = document.getElementById("subset-stats")
   statsContainer.classList.remove("hidden")
-  statsContainer.innerHTML =
-    '<p class="text-s color-dim">Calcul de l\'estimation...</p>'
 
-  try {
-    const checkboxes = document.querySelectorAll('input[name="subset"]:checked')
-    const ranges = Array.from(checkboxes).map((cb) => cb.value)
+  // Clear previous debounce
+  if (statsTimeout) clearTimeout(statsTimeout)
 
-    const subsetBuffer = await runHarfbuzzSubsetting(fontBuffer, ranges)
+  // Increment request ID to ignore previous pending calculations
+  const requestId = ++currentStatsRequestId
 
-    if (!subsetBuffer) {
-      statsContainer.innerHTML =
-        "<p class=\"text-warning text-s\">L'estimation n'est pas disponible pour ce fichier (subsetting impossible).</p>"
-      return
-    }
+  // Debounce: wait a bit before starting heavy computation to keep UI fluid
+  statsTimeout = setTimeout(async () => {
+    statsContainer.innerHTML =
+      '<p class="text-s color-dim">Calcul de l\'estimation en cours…</p>'
 
-    const originalSize = originalFileSize
-    const subsetSize = subsetBuffer.byteLength
-    // Estimation WOFF2 (~50% du TTF)
-    const estimatedWoff2Size = Math.round(subsetSize * 0.5)
-    const savedBytes = originalSize - estimatedWoff2Size
-    const savedPercent = Math.round((savedBytes / originalSize) * 100)
+    try {
+      const checkboxes = document.querySelectorAll(
+        'input[name="subset"]:checked',
+      )
+      const ranges = Array.from(checkboxes).map((cb) => cb.value)
 
-    const formatSize = (bytes) => {
-      if (bytes < 1024) return bytes + " B"
-      return (bytes / 1024).toFixed(1) + " KB"
-    }
+      // 1. Subsetting (Harfbuzz)
+      const subsetBuffer = await runHarfbuzzSubsetting(fontBuffer, ranges)
 
-    statsContainer.innerHTML = `
+      // Abort if a newer request has started
+      if (requestId !== currentStatsRequestId) return
+
+      if (!subsetBuffer) {
+        statsContainer.innerHTML =
+          "<p class=\"text-warning text-s\">L'estimation n'est pas disponible pour ce fichier (subsetting impossible).</p>"
+        return
+      }
+
+      // 2. Real Compression (WOFF2) for precise estimation
+      // This is the key to being "précis" as requested by the user
+      const woff2Buffer = await compress(subsetBuffer)
+
+      // Abort if a newer request has started
+      if (requestId !== currentStatsRequestId) return
+
+      const originalSize = originalFileSize
+      const subsetSize = subsetBuffer.byteLength
+      const estimatedWoff2Size = woff2Buffer.byteLength
+      const savedBytes = originalSize - estimatedWoff2Size
+      const savedPercent = Math.max(
+        0,
+        Math.round((savedBytes / originalSize) * 100),
+      )
+
+      const formatSize = (bytes) => {
+        if (bytes < 1024) return bytes + " B"
+        return (bytes / 1024).toFixed(1) + " KB"
+      }
+
+      statsContainer.innerHTML = `
             <div class="stats-card">
                 <h4 class="title-s">Estimation du gain</h4>
                 <ul class="stats-list" role="list">
                     <li>Original : <strong>${formatSize(originalSize)}</strong></li>
                     <li>Subset (TTF) : <strong>${formatSize(subsetSize)}</strong></li>
                     <li>Estimation WOFF2 : <strong>${formatSize(estimatedWoff2Size)}</strong></li>
-                    <li style="color: var(--color-success);">Gain : <strong>${savedPercent}%</strong></li>
+                    <li style="color: var(--color-success);">Gain estimé : <strong>${savedPercent}%</strong></li>
                 </ul>
             </div>
         `
-  } catch (err) {
-    // If no chars selected, just clear or show info
-    if (err.message === "Aucun caractère sélectionné.") {
-      statsContainer.innerHTML =
-        '<p class="text-s color-dim">Sélectionnez des plages pour voir l\'estimation.</p>'
-    } else {
-      statsContainer.innerHTML = `<p class="text-error text-s">Erreur d'estimation: ${err.message}</p>`
+    } catch (err) {
+      if (requestId !== currentStatsRequestId) return
+      // If no chars selected, just clear or show info
+      if (err.message === "Aucun caractère sélectionné.") {
+        statsContainer.innerHTML =
+          '<p class="text-s color-dim">Sélectionnez des plages pour voir l\'estimation.</p>'
+      } else {
+        statsContainer.innerHTML = `<p class="text-error text-s">Erreur d'estimation: ${err.message}</p>`
+      }
     }
-  }
+  }, 250)
 }
 
 async function generateSubset() {
