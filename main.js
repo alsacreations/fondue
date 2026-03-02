@@ -198,26 +198,14 @@ async function loadFontBuffer(buffer, name) {
     // Setup Preview
     updatePreviewFont()
 
-    // Initial stats update
-    updateStats()
-    fontInfoSection.classList.remove("hidden-aria")
-    fontInfoSection.removeAttribute("aria-hidden")
-    appWorkspace.classList.remove("hidden-aria")
-    appWorkspace.removeAttribute("aria-hidden")
+    // Render features
+    renderFeatureCheckboxes(fontObj)
 
     // Show optimization sections for valid fonts
     document.getElementById("section-axes").style.display = "block"
     document.getElementById("section-subsetting").style.display = "block"
+    document.getElementById("section-features").style.display = "block" // This might be hidden by renderFeatureCheckboxes if no features
     document.getElementById("section-export").style.display = "block"
-
-    // Generate and display @font-face CSS immediately
-    generateFontFaceCSS()
-
-    // Extract Axes
-    renderAxes()
-
-    // Setup Preview
-    updatePreviewFont()
 
     // Initial stats update
     updateStats()
@@ -232,6 +220,7 @@ async function loadFontBuffer(buffer, name) {
     // Hide optimization sections for invalid fonts
     document.getElementById("section-axes").style.display = "none"
     document.getElementById("section-subsetting").style.display = "none"
+    document.getElementById("section-features").style.display = "none"
     document.getElementById("section-export").style.display = "none"
 
     // Still update preview if possible
@@ -515,6 +504,45 @@ const UNICODE_RANGES = {
   },
 }
 
+// Friendly names for common OpenType features
+const FEATURE_NAMES = {
+  // Basic / Essential
+  liga: { name: "Ligatures standard", category: "basic" },
+  clig: { name: "Ligatures contextuelles", category: "basic" },
+  kern: { name: "Kerning (Crénage)", category: "basic" },
+  calt: { name: "Alternatives contextuelles", category: "basic" },
+  locl: { name: "Formes localisées", category: "basic" },
+  ccmp: { name: "Composition de glyphes", category: "basic" },
+  mark: { name: "Placement des accents", category: "basic" },
+  mkmk: { name: "Accents sur accents", category: "basic" },
+  dist: { name: "Distances de caractères", category: "basic" },
+
+  // Advanced / Rare
+  smcp: { name: "Petites capitales", category: "rare" },
+  c2sc: { name: "Petites capitales (depuis maj.)", category: "rare" },
+  onum: { name: "Chiffres elzéviriens", category: "rare" },
+  pnum: { name: "Chiffres proportionnels", category: "rare" },
+  tnum: { name: "Chiffres tabulaires", category: "rare" },
+  lnum: { name: "Chiffres classiques", category: "rare" },
+  frac: { name: "Fractions", category: "rare" },
+  numr: { name: "Numérateurs", category: "rare" },
+  dnom: { name: "Dénominateurs", category: "rare" },
+  salt: { name: "Variantes stylistiques", category: "rare" },
+  swsh: { name: "Swash (Enjoliveurs)", category: "rare" },
+  ordn: { name: "Ordinaux", category: "rare" },
+  zero: { name: "Zéro barré", category: "rare" },
+  ss01: { name: "Variante stylistique 01", category: "rare" },
+  ss02: { name: "Variante stylistique 02", category: "rare" },
+  ss03: { name: "Variante stylistique 03", category: "rare" },
+  ss04: { name: "Variante stylistique 04", category: "rare" },
+  ss05: { name: "Variante stylistique 05", category: "rare" },
+  ss06: { name: "Variante stylistique 06", category: "rare" },
+  ss07: { name: "Variante stylistique 07", category: "rare" },
+  ss08: { name: "Variante stylistique 08", category: "rare" },
+  ss09: { name: "Variante stylistique 09", category: "rare" },
+  ss10: { name: "Variante stylistique 10", category: "rare" },
+}
+
 function renderUnicodeCheckboxes() {
   const container = document.getElementById("unicode-ranges")
   container.innerHTML = ""
@@ -541,6 +569,69 @@ function renderUnicodeCheckboxes() {
 
   // Initial update to sync preview with default checked boxes
   updatePreviewContent()
+}
+
+function renderFeatureCheckboxes(font) {
+  const containerBasic = document.getElementById("feature-tags-basic")
+  const containerRare = document.getElementById("feature-tags-rare")
+  const section = document.getElementById("section-features")
+  containerBasic.innerHTML = ""
+  containerRare.innerHTML = ""
+
+  // Track which features belong to which table
+  const features = {} // tag -> Set of tables
+
+  if (font.tables.gsub && font.tables.gsub.features) {
+    font.tables.gsub.features.forEach((f) => {
+      if (!features[f.tag]) features[f.tag] = new Set()
+      features[f.tag].add("GSUB")
+    })
+  }
+  if (font.tables.gpos && font.tables.gpos.features) {
+    font.tables.gpos.features.forEach((f) => {
+      if (!features[f.tag]) features[f.tag] = new Set()
+      features[f.tag].add("GPOS")
+    })
+  }
+
+  const tags = Object.keys(features).sort()
+  if (tags.length === 0) {
+    section.style.display = "none"
+    return
+  }
+
+  section.style.display = "block"
+
+  tags.forEach((tag) => {
+    const label = document.createElement("label")
+    label.className = "checkbox-card"
+    const featureInfo = FEATURE_NAMES[tag] || { name: tag, category: "rare" }
+    const name = featureInfo.name
+    const category = featureInfo.category
+    const tables = Array.from(features[tag]).join(",")
+
+    // Logic: Keep "basic" features checked by default, "rare" unchecked
+    const isChecked = category === "basic"
+
+    label.innerHTML = `
+            <input type="checkbox" name="feature" value="${tag}" data-tables="${tables}" ${isChecked ? "checked" : ""}>
+            <span title="${tag}">${name}</span>
+        `
+
+    if (category === "basic") {
+      containerBasic.appendChild(label)
+    } else {
+      containerRare.appendChild(label)
+    }
+
+    label.querySelector("input").addEventListener("change", updateStats)
+  })
+
+  // Hide empty groups
+  if (containerBasic.innerHTML === "")
+    containerBasic.parentElement.style.display = "none"
+  if (containerRare.innerHTML === "")
+    containerRare.parentElement.style.display = "none"
 }
 
 function updatePreviewContent() {
@@ -576,8 +667,24 @@ function updatePreviewContent() {
   }
 }
 
-async function runHarfbuzzSubsetting(buffer, ranges) {
+async function runHarfbuzzSubsetting(
+  buffer,
+  ranges,
+  keepFeatures = [],
+  dropTables = [],
+) {
   const exports = await loadHarfbuzzSubset()
+
+  // Helper for tag conversion
+  const tagToUint32 = (tag) => {
+    return (
+      (((tag.charCodeAt(0) & 0xff) << 24) |
+        ((tag.charCodeAt(1) & 0xff) << 16) |
+        ((tag.charCodeAt(2) & 0xff) << 8) |
+        (tag.charCodeAt(3) & 0xff)) >>>
+      0
+    )
+  }
 
   // Allocate memory for font in WASM memory
   const heapu8 = new Uint8Array(exports.memory.buffer)
@@ -616,11 +723,37 @@ async function runHarfbuzzSubsetting(buffer, ranges) {
   // Prepare Subset Input
   const input = exports.hb_subset_input_create_or_fail()
 
-  // On retire "keep_everything" et "RETAIN_GIDS" car ils empêchent la suppression des glyphes.
-  // Par défaut, HarfBuzz ne gardera que les glyphes nécessaires aux unicodes fournis.
+  // Handle dropping tables entirely (Index 3 = HB_SUBSET_SETS_DROP_TABLE_TAG)
+  if (exports.hb_subset_input_set && dropTables.length > 0) {
+    const dropTableSet = exports.hb_subset_input_set(input, 3)
+    if (dropTableSet) {
+      dropTables.forEach((table) => {
+        exports.hb_set_add(dropTableSet, tagToUint32(table))
+      })
+    }
+  }
+
+  // Handle layout features (using index 6 for the set of features to KEEP)
+  // According to standard HarfBuzz enum: 6 = HB_SUBSET_SETS_LAYOUT_FEATURE_TAG
+  // If keepFeatures is empty, and we didn't drop the whole table, HarfBuzz keeps all.
+  // To drop all features but keep the table structure, we can pass an empty set or a dummy tag.
+  if (exports.hb_subset_input_set && keepFeatures.length > 0) {
+    const keepSet = exports.hb_subset_input_set(input, 6)
+    if (keepSet) {
+      keepFeatures.forEach((tag) => {
+        exports.hb_set_add(keepSet, tagToUint32(tag))
+      })
+    }
+  } else if (exports.hb_subset_input_set && dropTables.length === 0) {
+    // Note: If no individual features are specified to be kept,
+    // and the table isn't dropped entirely, we don't touch index 6,
+    // which usually means "keep all" for features in that table.
+  }
+
+  // Set subset flags: use 0 (DEFAULT) for maximum optimization.
+  // This allows the subsetter to fully prune everything that is not requested.
   if (exports.hb_subset_input_set_flags) {
-    // On peut utiliser 0 pour les flags par défaut ou HB_SUBSET_FLAGS_NAME_LEGACY (0x00000004) pour la compatibilité
-    exports.hb_subset_input_set_flags(input, 0x00000004)
+    exports.hb_subset_input_set_flags(input, 0)
   }
 
   const unicode_set = exports.hb_subset_input_unicode_set(input)
@@ -695,8 +828,45 @@ async function updateStats() {
       )
       const ranges = Array.from(checkboxes).map((cb) => cb.value)
 
+      const featureCheckboxes = document.querySelectorAll(
+        'input[name="feature"]',
+      )
+      const keepFeatureCheckboxes = document.querySelectorAll(
+        'input[name="feature"]:checked',
+      )
+
+      const keepFeatures = Array.from(keepFeatureCheckboxes).map(
+        (cb) => cb.value,
+      )
+
+      // Determine which tables to drop entirely if all their features are unchecked
+      const dropTables = []
+      const featuresByTable = { GSUB: [], GPOS: [] }
+      featureCheckboxes.forEach((cb) => {
+        const tables = cb.getAttribute("data-tables").split(",")
+        tables.forEach((t) => featuresByTable[t].push(cb))
+      })
+
+      if (
+        featuresByTable.GSUB.length > 0 &&
+        featuresByTable.GSUB.every((cb) => !cb.checked)
+      ) {
+        dropTables.push("GSUB")
+      }
+      if (
+        featuresByTable.GPOS.length > 0 &&
+        featuresByTable.GPOS.every((cb) => !cb.checked)
+      ) {
+        dropTables.push("GPOS")
+      }
+
       // 1. Subsetting (Harfbuzz)
-      const subsetBuffer = await runHarfbuzzSubsetting(fontBuffer, ranges)
+      const subsetBuffer = await runHarfbuzzSubsetting(
+        fontBuffer,
+        ranges,
+        keepFeatures,
+        dropTables,
+      )
 
       // Abort if a newer request has started
       if (requestId !== currentStatsRequestId) return
@@ -763,7 +933,38 @@ async function generateSubset() {
     const checkboxes = document.querySelectorAll('input[name="subset"]:checked')
     const ranges = Array.from(checkboxes).map((cb) => cb.value)
 
-    const subsetBuffer = await runHarfbuzzSubsetting(fontBuffer, ranges)
+    const featureCheckboxes = document.querySelectorAll('input[name="feature"]')
+    const keepFeatureCheckboxes = document.querySelectorAll(
+      'input[name="feature"]:checked',
+    )
+    const keepFeatures = Array.from(keepFeatureCheckboxes).map((cb) => cb.value)
+
+    const dropTables = []
+    const featuresByTable = { GSUB: [], GPOS: [] }
+    featureCheckboxes.forEach((cb) => {
+      const tables = cb.getAttribute("data-tables").split(",")
+      tables.forEach((t) => featuresByTable[t].push(cb))
+    })
+
+    if (
+      featuresByTable.GSUB.length > 0 &&
+      featuresByTable.GSUB.every((cb) => !cb.checked)
+    ) {
+      dropTables.push("GSUB")
+    }
+    if (
+      featuresByTable.GPOS.length > 0 &&
+      featuresByTable.GPOS.every((cb) => !cb.checked)
+    ) {
+      dropTables.push("GPOS")
+    }
+
+    const subsetBuffer = await runHarfbuzzSubsetting(
+      fontBuffer,
+      ranges,
+      keepFeatures,
+      dropTables,
+    )
 
     if (!subsetBuffer) {
       exportStatus.innerHTML = `<p class="text-warning">⚠ Impossible de créer le subset. Le téléchargement ne contiendra que le fichier original.</p>`
