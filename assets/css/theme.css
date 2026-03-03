@@ -1,5 +1,5 @@
 /* ----------------------------------
- * Theme du projet (valeurs primitives)
+ * Theme du projet
  * ----------------------------------
  */
 
@@ -16,6 +16,17 @@
 /* stylelint-enable */
 
 :root {
+
+  /* Theme (color-scheme) */
+  color-scheme: light;
+
+  &[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  &[data-theme="dark"] {
+    color-scheme: dark;
+  }
 
   /* Breakpoints (en dur) */
   --md: 48rem; /* 768px */
@@ -49,6 +60,25 @@
   --spacing-64: 4rem;
   --spacing-80: 5rem;
 
+  /* Espacements (tokens) */
+  --spacing-xs: var(--spacing-4);
+  --spacing-s: clamp(var(--spacing-8), 0.2955rem + 0.9091vw, var(--spacing-16));
+  --spacing-m: clamp(
+    var(--spacing-16),
+    0.5909rem + 1.8182vw,
+    var(--spacing-32)
+  );
+  --spacing-l: clamp(
+    var(--spacing-24),
+    0.8864rem + 2.2727vw,
+    var(--spacing-48)
+  );
+  --spacing-xl: clamp(
+    var(--spacing-32),
+    0.7727rem + 5.4545vw,
+    var(--spacing-80)
+  );
+
   /* Familles de police */
   --font-base:  system-ui, sans-serif;
   --font-mono:  ui-monospace, monospace;
@@ -75,7 +105,16 @@
   --text-64: 4rem;
   --text-80: 5rem;
 
-  /* Interlignage (line-height) */
+  /* Tailles de police (tokens) */
+  --text-s: var(--text-14);
+  --text-m: clamp(var(--text-16), 0.9565rem + 0.2174vw, var(--text-18));
+  --text-l: clamp(var(--text-18), 1.0761rem + 0.2174vw, var(--text-20));
+  --text-xl: clamp(var(--text-20), 0.957rem + 1.3043vw, var(--text-32));
+  --text-2xl: clamp(var(--text-24), 1.2065rem + 1.3043vw, var(--text-36));
+  --text-3xl: clamp(var(--text-32), 1.609rem + 1.7391vw, var(--text-48));
+  --text-4xl: clamp(var(--text-48), 2.1818rem + 3.6364vw, var(--text-80));
+
+  /* Hauteurs de lignes */
   --line-height-20: 1.25rem;
   --line-height-24: 1.5rem;
   --line-height-28: 1.75rem;
@@ -86,6 +125,38 @@
   --line-height-56: 3.5rem;
   --line-height-80: 5rem;
   --line-height-100: 6.25rem;
+
+  /* Hauteurs de lignes (tokens) */
+  --line-height-s: clamp(
+    var(--line-height-20),
+    1.1522rem + 0.4348vw,
+    var(--line-height-24)
+  );
+  --line-height-m: clamp(
+    var(--line-height-24),
+    1.4022rem + 0.4348vw,
+    var(--line-height-28)
+  );
+  --line-height-2xl: clamp(
+    var(--line-height-32),
+    1.9022rem + 0.4348vw,
+    var(--line-height-36)
+  );
+  --line-height-5xl: clamp(
+    var(--line-height-40),
+    1.8152rem + 3.0435vw,
+    var(--line-height-68)
+  );
+  --line-height-4xl: clamp(
+    var(--line-height-40),
+    2.1087rem + 1.7391vw,
+    var(--line-height-56)
+  );
+  --line-height-6xl: clamp(
+    var(--line-height-80),
+    4.5109rem + 2.1739vw,
+    var(--line-height-100)
+  );
 
   /* Border radius */
   --radius-none: 0;
@@ -129,4 +200,51 @@
   --color-info-500: oklch(0.5133 0.18 256.37);
   --color-info-700: oklch(0.3633 0.18 256.37);
   --color-info-900: oklch(0.2133 0.11 256.37);
+
+  /* Couleur primaire */
+  --primary: oklch(0.55 0.25 260); /* Vibrant Indigo */
+  --on-primary: var(--color-white);
+  --primary-lighten: oklch(from var(--primary) calc(l * 1.1) c h);
+  --primary-darken: oklch(from var(--primary) calc(l * 0.9) c h);
+
+  /* Couleur d'accent */
+  --accent: light-dark(var(--primary), var(--primary-lighten));
+  --accent-invert: light-dark(var(--primary-lighten), var(--primary));
+
+  /* Surface du document */
+  --surface: light-dark(var(--color-white), var(--color-gray-900));
+  --on-surface: light-dark(var(--color-gray-900), var(--color-gray-100));
+
+  /* Niveaux de profondeur */
+  --layer-1: light-dark(var(--color-gray-50), var(--color-gray-800));
+  --layer-2: light-dark(var(--color-gray-100), var(--color-gray-700));
+  --layer-3: light-dark(var(--color-gray-200), var(--color-gray-600));
+
+  /* Interactions */
+  --link: light-dark(var(--primary), var(--primary-lighten));
+  --link-hover: light-dark(var(--primary-darken), var(--primary));
+  --link-active: light-dark(var(--primary-darken), var(--primary));
+
+  /* Couleur de sélection */
+  --selection: light-dark(var(--primary-lighten), var(--primary-darken));
+
+  /* États d'alerte */
+  --warning: light-dark(var(--color-warning-500), var(--color-warning-300));
+  --error: light-dark(var(--color-error-500), var(--color-error-300));
+  --success: light-dark(var(--color-success-500), var(--color-success-300));
+  --info: light-dark(var(--color-info-500), var(--color-info-300));
+
+  /* Bordures */
+  --border-light: var(--color-gray-200);
+  --border-medium: var(--color-gray-400);
+
+  /* Tokens complémentaires */
+  --form-background: light-dark(var(--color-gray-50), var(--color-gray-800));
+  --on-form: light-dark(var(--color-gray-900), var(--color-gray-100));
+  --form-spacing: var(--spacing-12) var(--spacing-16);
+  --form-border-width: 1px;
+  --form-border-color: var(--color-gray-400);
+  --form-border-radius: var(--radius-4);
+  --checkables-border-color: var(--color-gray-400);
+  --checkable-size: 1.25em;
 }
