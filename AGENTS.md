@@ -21,10 +21,12 @@ Outil web 100% client-side pour l'optimisation (subsetting) et la conversion de 
 ## Conventions Critiques
 
 - **Zéro Backend** : Tout le traitement doit rester dans le navigateur (WebAssembly/Blobs).
-- **CSS Vanilla** : Ne pas ajouter de framework CSS. Utiliser les variables CSS existantes.
 - **Performance** : Les opérations lourdes (parsing, subsetting) doivent être asynchrones pour ne pas bloquer l'UI.
 - **Naming** : Les fichiers exportés suivent la convention `Nom-opti.woff2`.
 - **Assets** : Les polices d'exemple sont dans `/public/fonts` et la collection dans `/public/collection`.
+- **CSS Vanilla** : pas de styles inline (bloqués par CSP) ; custom properties référencées dans les fichiers `assets/css/theme.css` ; breakpoints via `@media (--md)` (custom media queries)
+- **Commits** : Conventional Commits, type en anglais, description en français — ex. : `feat(contact): ajoute captcha`
+- **Commentaires** : en français
 
 ---
 *Note : Pour des détails sur HarfBuzz ou OpenType, voir les skills dédiées.*
