@@ -1,5 +1,5 @@
 /* ----------------------------------
- * Theme du projet
+ * Thème du projet — Atelier de Nuit
  * ----------------------------------
  */
 
@@ -17,8 +17,8 @@
 
 :root {
 
-  /* Theme (color-scheme) */
-  color-scheme: light;
+  /* Thème sombre par défaut */
+  color-scheme: dark;
 
   &[data-theme="light"] {
     color-scheme: light;
@@ -80,8 +80,8 @@
   );
 
   /* Familles de police */
-  --font-base:  system-ui, sans-serif;
-  --font-mono:  ui-monospace, monospace;
+  --font-base: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 
   /* Graisses de police */
   --font-weight-light: 300;
@@ -167,7 +167,7 @@
   --radius-24: 1.5rem;
   --radius-full: 9999px;
 
-  /* Couleurs (globales) */
+  /* Couleurs neutres (globales) */
   --color-white: oklch(1 0 0);
   --color-black: oklch(0 0 0);
   --color-gray-50: oklch(0.97 0 0);
@@ -180,6 +180,23 @@
   --color-gray-700: oklch(0.269 0 0);
   --color-gray-800: oklch(0.205 0 0);
   --color-gray-900: oklch(0.145 0 0);
+
+  /* Couleurs de marque — Bleu électrique (#2061f2) */
+  --color-blue-300: oklch(0.65 0.22 264);
+  --color-blue-400: oklch(0.58 0.26 264);
+  --color-blue-500: oklch(0.47 0.285 264);
+  --color-blue-600: oklch(0.39 0.25 264);
+  --color-blue-700: oklch(0.31 0.20 264);
+
+  /* Couleurs de marque — Fromage/Or (#f8e49b → #f9ce68 → #fabc50) */
+  --color-cheese-100: oklch(0.96 0.06 84);
+  --color-cheese-200: oklch(0.92 0.09 84);
+  --color-cheese-300: oklch(0.86 0.14 77);
+  --color-cheese-400: oklch(0.81 0.17 73);
+  --color-cheese-500: oklch(0.73 0.17 72);
+  --color-cheese-600: oklch(0.63 0.15 71);
+
+  /* Couleurs de statut */
   --color-error-100: oklch(0.97 0.1 27.52);
   --color-error-300: oklch(0.7054 0.19 27.52);
   --color-error-500: oklch(0.5054 0.19 27.52);
@@ -201,32 +218,47 @@
   --color-info-700: oklch(0.3633 0.18 256.37);
   --color-info-900: oklch(0.2133 0.11 256.37);
 
-  /* Couleur primaire */
-  --primary: oklch(0.55 0.25 260); /* Vibrant Indigo */
+  /* Surfaces sombres (primitives dark) */
+  --dark-base:    oklch(0.11 0.022 265);
+  --dark-layer-1: oklch(0.16 0.018 265);
+  --dark-layer-2: oklch(0.21 0.015 265);
+  --dark-layer-3: oklch(0.27 0.012 265);
+  --dark-layer-4: oklch(0.33 0.010 265);
+
+  /* Couleur primaire — Bleu */
+  --primary: var(--color-blue-500);
   --on-primary: var(--color-white);
-  --primary-lighten: oklch(from var(--primary) calc(l * 1.1) c h);
-  --primary-darken: oklch(from var(--primary) calc(l * 0.9) c h);
+  --primary-lighten: var(--color-blue-400);
+  --primary-darken: var(--color-blue-600);
+
+  /* Couleur fromage — accent chaud */
+  --cheese: light-dark(var(--color-cheese-500), var(--color-cheese-400));
+  --cheese-light: light-dark(var(--color-cheese-300), var(--color-cheese-200));
 
   /* Couleur d'accent */
-  --accent: light-dark(var(--primary), var(--primary-lighten));
-  --accent-invert: light-dark(var(--primary-lighten), var(--primary));
+  --accent: light-dark(var(--color-blue-500), var(--color-cheese-400));
+  --accent-invert: light-dark(var(--color-cheese-400), var(--color-blue-500));
 
   /* Surface du document */
-  --surface: light-dark(var(--color-white), var(--color-gray-900));
-  --on-surface: light-dark(var(--color-gray-900), var(--color-gray-100));
+  --surface: light-dark(oklch(0.97 0.005 265), var(--dark-base));
+  --on-surface: light-dark(oklch(0.14 0.02 265), var(--color-gray-50));
 
   /* Niveaux de profondeur */
-  --layer-1: light-dark(var(--color-gray-50), var(--color-gray-800));
-  --layer-2: light-dark(var(--color-gray-100), var(--color-gray-700));
-  --layer-3: light-dark(var(--color-gray-200), var(--color-gray-600));
+  --layer-1: light-dark(var(--color-gray-50), var(--dark-layer-1));
+  --layer-2: light-dark(var(--color-gray-100), var(--dark-layer-2));
+  --layer-3: light-dark(var(--color-gray-200), var(--dark-layer-3));
+
+  /* Texte atténué */
+  --text-muted: light-dark(var(--color-gray-600), var(--color-gray-400));
+  --text-subtle: light-dark(var(--color-gray-400), var(--color-gray-500));
 
   /* Interactions */
-  --link: light-dark(var(--primary), var(--primary-lighten));
-  --link-hover: light-dark(var(--primary-darken), var(--primary));
-  --link-active: light-dark(var(--primary-darken), var(--primary));
+  --link: light-dark(var(--primary), var(--color-blue-400));
+  --link-hover: light-dark(var(--primary-darken), var(--color-blue-300));
+  --link-active: light-dark(var(--primary-darken), var(--color-blue-500));
 
   /* Couleur de sélection */
-  --selection: light-dark(var(--primary-lighten), var(--primary-darken));
+  --selection: light-dark(var(--color-cheese-200), var(--color-cheese-400));
 
   /* États d'alerte */
   --warning: light-dark(var(--color-warning-500), var(--color-warning-300));
@@ -235,16 +267,16 @@
   --info: light-dark(var(--color-info-500), var(--color-info-300));
 
   /* Bordures */
-  --border-light: var(--color-gray-200);
-  --border-medium: var(--color-gray-400);
+  --border-light: light-dark(var(--color-gray-200), oklch(0.26 0.012 265));
+  --border-medium: light-dark(var(--color-gray-400), oklch(0.36 0.012 265));
 
-  /* Tokens complémentaires */
-  --form-background: light-dark(var(--color-gray-50), var(--color-gray-800));
-  --on-form: light-dark(var(--color-gray-900), var(--color-gray-100));
+  /* Tokens formulaires */
+  --form-background: light-dark(var(--color-white), var(--dark-layer-1));
+  --on-form: light-dark(oklch(0.14 0.02 265), var(--color-gray-100));
   --form-spacing: var(--spacing-12) var(--spacing-16);
   --form-border-width: 1px;
-  --form-border-color: var(--color-gray-400);
-  --form-border-radius: var(--radius-4);
-  --checkables-border-color: var(--color-gray-400);
+  --form-border-color: light-dark(var(--color-gray-300), oklch(0.32 0.012 265));
+  --form-border-radius: var(--radius-8);
+  --checkables-border-color: light-dark(var(--color-gray-400), oklch(0.38 0.012 265));
   --checkable-size: 1.25em;
 }
