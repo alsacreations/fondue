@@ -26,6 +26,13 @@ const generateBtn = document.getElementById("btn-generate")
 const exportStatus = document.getElementById("export-status")
 const loadExampleBtn = document.getElementById("btn-load-example")
 const collectionList = document.getElementById("collection-list")
+const sectionImport = document.querySelector(".section-import")
+const sectionCollection = document.querySelector(".section-collection")
+const resetContainer = document.getElementById("reset-container")
+const previewSection = document.getElementById("preview-section")
+const headerEl = document.querySelector(".header")
+const containerCss = document.getElementById("font-face-css-container")
+const containerHtml = document.getElementById("font-face-html-container")
 
 // --- Initialization ---
 function init() {
@@ -33,6 +40,77 @@ function init() {
   setupPreviewControls()
   setupExampleLoader()
   setupCollectionLoader()
+  setupReset()
+}
+
+function setupReset() {
+  const btnReset = document.getElementById("btn-reset")
+  if (!btnReset) return
+  btnReset.addEventListener("click", resetApp)
+}
+
+// Masque les sections d'import/collection et affiche le reset + preview après chargement d'une police
+function showFontWorkspace() {
+  sectionImport.classList.add("hidden-aria")
+  sectionImport.setAttribute("aria-hidden", "true")
+  sectionCollection.classList.add("hidden-aria")
+  sectionCollection.setAttribute("aria-hidden", "true")
+  resetContainer.classList.remove("hidden-aria")
+  resetContainer.removeAttribute("aria-hidden")
+  previewSection.classList.remove("hidden-aria")
+  previewSection.removeAttribute("aria-hidden")
+  headerEl.classList.add("header--compact")
+}
+
+// Réinitialise l'application à son état initial
+function resetApp() {
+  fontBuffer = null
+  originalFileSize = 0
+  fontFileName = "custom-font.ttf"
+  fontObj = null
+  axes = {}
+  previewIsDirty = false
+  fileInput.value = ""
+
+  // Réafficher les sections d'import
+  sectionImport.classList.remove("hidden-aria")
+  sectionImport.removeAttribute("aria-hidden")
+  sectionCollection.classList.remove("hidden-aria")
+  sectionCollection.removeAttribute("aria-hidden")
+
+  // Masquer reset, preview, workspace
+  resetContainer.classList.add("hidden-aria")
+  resetContainer.setAttribute("aria-hidden", "true")
+  previewSection.classList.add("hidden-aria")
+  previewSection.setAttribute("aria-hidden", "true")
+  appWorkspace.classList.add("hidden-aria")
+  appWorkspace.setAttribute("aria-hidden", "true")
+  fontInfoSection.classList.add("hidden-aria")
+  fontInfoSection.setAttribute("aria-hidden", "true")
+
+  // Restaurer le header
+  headerEl.classList.remove("header--compact")
+
+  // Réinitialiser la prévisualisation
+  previewText.style.fontFamily = ""
+  previewText.style.fontVariationSettings = ""
+  axesContainer.innerHTML = ""
+  fontInfo.innerHTML = "<p>Aucune police chargée.</p>"
+
+  const statsContainer = document.getElementById("subset-stats")
+  if (statsContainer) {
+    statsContainer.classList.add("hidden")
+    statsContainer.innerHTML = ""
+  }
+
+  const fontFaceCSSContainer = document.getElementById("font-face-css-container")
+  if (fontFaceCSSContainer) {
+    fontFaceCSSContainer.style.display = "none"
+  }
+  const fontFaceHTMLContainer = document.getElementById("font-face-html-container")
+  if (fontFaceHTMLContainer) {
+    fontFaceHTMLContainer.style.display = "none"
+  }
 }
 
 function setupExampleLoader() {
@@ -189,6 +267,9 @@ async function loadFontBuffer(buffer, name) {
     appWorkspace.classList.remove("hidden-aria")
     appWorkspace.removeAttribute("aria-hidden")
 
+    // Masquer import/collection, afficher reset + preview
+    showFontWorkspace()
+
     // Generate and display @font-face CSS immediately
     generateFontFaceCSS()
 
@@ -216,6 +297,9 @@ async function loadFontBuffer(buffer, name) {
     fontInfoSection.removeAttribute("aria-hidden")
     appWorkspace.classList.remove("hidden-aria")
     appWorkspace.removeAttribute("aria-hidden")
+
+    // Masquer import/collection, afficher reset + preview
+    showFontWorkspace()
 
     // Hide optimization sections for invalid fonts
     document.getElementById("section-axes").style.display = "none"
@@ -373,11 +457,10 @@ function updateCSSRule() {
 }
 
 function generateFontFaceCSS() {
-  const container = document.getElementById("font-face-css-container")
   const codeElement = document.getElementById("font-face-css-code")
   const preloadElement = document.getElementById("preload-html-code")
 
-  if (!container || !codeElement || !fontObj) return
+  if (!containerCss || !codeElement || !fontObj) return
 
   // Generate @font-face CSS for the optimized WOFF2 file
   const fontFamily = fontObj.names.fontFamily?.en || "CustomFont"
@@ -436,7 +519,8 @@ function generateFontFaceCSS() {
   if (preloadElement) {
     preloadElement.textContent = preloadHTML
   }
-  container.style.display = "block"
+  containerCss.style.display = "block"
+  containerHtml.style.display = "block"
 }
 
 function setupPreviewControls() {
@@ -901,14 +985,14 @@ async function updateStats() {
 
       statsContainer.innerHTML = `
             <div class="stats-card">
-                <h4 class="title-s">Estimation du gain</h4>
-                <ul class="stats-list" role="list">
-                    <li>Original : <strong>${formatSize(originalSize)}</strong></li>
-                    <li>Subset (TTF) : <strong>${formatSize(subsetSize)}</strong></li>
-                    <li>Estimation WOFF2 : <strong>${formatSize(estimatedWoff2Size)}</strong></li>
-                    <li style="color: var(--color-success);">Gain estimé : <strong>${savedPercent}%</strong></li>
-                </ul>
+              <h4 class="title-s">Optimisation</h4>
+              <ul class="stats-list" role="list">
+                  <li>Original : <strong>${formatSize(originalSize)}</strong></li>
+                  <li>Subset (TTF) : <strong>${formatSize(subsetSize)}</strong></li>
+                  <li>Estimation WOFF2 : <strong>${formatSize(estimatedWoff2Size)}</strong></li>
+              </ul>
             </div>
+            <p class="${savedBytes > 0 ? "stats-gain-positive" : "stats-gain-negative"}"><strong>${savedPercent}%</strong><span>Gain estimé</span></p>
         `
     } catch (err) {
       if (requestId !== currentStatsRequestId) return

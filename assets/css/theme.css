@@ -5,10 +5,10 @@
 
 /* stylelint-disable */
 /* Breakpoints custom (si compatibles) */
-@custom-media --md (width >= 48rem);
-@custom-media --lg (width >= 64rem);
-@custom-media --xl (width >= 80rem);
-@custom-media --xxl (width >= 96rem);
+@custom-media --md (width >=48rem);
+@custom-media --lg (width >=64rem);
+@custom-media --xl (width >=80rem);
+@custom-media --xxl (width >=96rem);
 @custom-media --until-md (width < 48rem);
 @custom-media --until-lg (width < 64rem);
 @custom-media --until-xl (width < 80rem);
@@ -29,10 +29,14 @@
   }
 
   /* Breakpoints (en dur) */
-  --md: 48rem; /* 768px */
-  --lg: 64rem; /* 1024px */
-  --xl: 80rem; /* 1280px */
-  --xxl: 96rem; /* 1536px */
+  --md: 48rem;
+  /* 768px */
+  --lg: 64rem;
+  /* 1024px */
+  --xl: 80rem;
+  /* 1280px */
+  --xxl: 96rem;
+  /* 1536px */
 
   /* Transitions et animations */
   --transition-duration: 250ms;
@@ -63,25 +67,25 @@
   /* Espacements (tokens) */
   --spacing-xs: var(--spacing-4);
   --spacing-s: clamp(var(--spacing-8), 0.2955rem + 0.9091vw, var(--spacing-16));
-  --spacing-m: clamp(
-    var(--spacing-16),
+  --spacing-m: clamp(var(--spacing-16),
     0.5909rem + 1.8182vw,
-    var(--spacing-32)
-  );
-  --spacing-l: clamp(
-    var(--spacing-24),
+    var(--spacing-32));
+  --spacing-l: clamp(var(--spacing-24),
     0.8864rem + 2.2727vw,
-    var(--spacing-48)
-  );
-  --spacing-xl: clamp(
-    var(--spacing-32),
+    var(--spacing-48));
+  --spacing-xl: clamp(var(--spacing-32),
     0.7727rem + 5.4545vw,
-    var(--spacing-80)
-  );
+    var(--spacing-80));
 
   /* Familles de police */
-  --font-base: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+  --font-base: ui-sans-serif,
+  system-ui,
+  -apple-system,
+  sans-serif;
+  --font-mono: ui-monospace,
+  "Cascadia Code",
+  "Fira Code",
+  monospace;
 
   /* Graisses de police */
   --font-weight-light: 300;
@@ -127,36 +131,24 @@
   --line-height-100: 6.25rem;
 
   /* Hauteurs de lignes (tokens) */
-  --line-height-s: clamp(
-    var(--line-height-20),
+  --line-height-s: clamp(var(--line-height-20),
     1.1522rem + 0.4348vw,
-    var(--line-height-24)
-  );
-  --line-height-m: clamp(
-    var(--line-height-24),
+    var(--line-height-24));
+  --line-height-m: clamp(var(--line-height-24),
     1.4022rem + 0.4348vw,
-    var(--line-height-28)
-  );
-  --line-height-2xl: clamp(
-    var(--line-height-32),
+    var(--line-height-28));
+  --line-height-2xl: clamp(var(--line-height-32),
     1.9022rem + 0.4348vw,
-    var(--line-height-36)
-  );
-  --line-height-5xl: clamp(
-    var(--line-height-40),
+    var(--line-height-36));
+  --line-height-5xl: clamp(var(--line-height-40),
     1.8152rem + 3.0435vw,
-    var(--line-height-68)
-  );
-  --line-height-4xl: clamp(
-    var(--line-height-40),
+    var(--line-height-68));
+  --line-height-4xl: clamp(var(--line-height-40),
     2.1087rem + 1.7391vw,
-    var(--line-height-56)
-  );
-  --line-height-6xl: clamp(
-    var(--line-height-80),
+    var(--line-height-56));
+  --line-height-6xl: clamp(var(--line-height-80),
     4.5109rem + 2.1739vw,
-    var(--line-height-100)
-  );
+    var(--line-height-100));
 
   /* Border radius */
   --radius-none: 0;
@@ -219,7 +211,7 @@
   --color-info-900: oklch(0.2133 0.11 256.37);
 
   /* Surfaces sombres (primitives dark) */
-  --dark-base:    oklch(0.11 0.022 265);
+  --dark-base: oklch(0.11 0.022 265);
   --dark-layer-1: oklch(0.16 0.018 265);
   --dark-layer-2: oklch(0.21 0.015 265);
   --dark-layer-3: oklch(0.27 0.012 265);
@@ -249,7 +241,7 @@
   --layer-3: light-dark(var(--color-gray-200), var(--dark-layer-3));
 
   /* Texte atténué */
-  --text-muted: light-dark(var(--color-gray-600), var(--color-gray-400));
+  --text-muted: light-dark(var(--color-gray-600), var(--color-gray-300));
   --text-subtle: light-dark(var(--color-gray-400), var(--color-gray-500));
 
   /* Interactions */
