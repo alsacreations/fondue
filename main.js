@@ -105,11 +105,13 @@ function resetApp() {
 
   const fontFaceCSSContainer = document.getElementById("font-face-css-container")
   if (fontFaceCSSContainer) {
-    fontFaceCSSContainer.style.display = "none"
+    fontFaceCSSContainer.classList.add("hidden-aria")
+    fontFaceCSSContainer.setAttribute("aria-hidden", "true")
   }
   const fontFaceHTMLContainer = document.getElementById("font-face-html-container")
   if (fontFaceHTMLContainer) {
-    fontFaceHTMLContainer.style.display = "none"
+    fontFaceHTMLContainer.classList.add("hidden-aria")
+    fontFaceHTMLContainer.setAttribute("aria-hidden", "true")
   }
 }
 
@@ -283,10 +285,18 @@ async function loadFontBuffer(buffer, name) {
     renderFeatureCheckboxes(fontObj)
 
     // Show optimization sections for valid fonts
-    document.getElementById("section-axes").style.display = "block"
-    document.getElementById("section-subsetting").style.display = "block"
-    document.getElementById("section-features").style.display = "block" // This might be hidden by renderFeatureCheckboxes if no features
-    document.getElementById("section-export").style.display = "block"
+    const sectionAxes = document.getElementById("section-axes")
+    sectionAxes.classList.remove("hidden-aria")
+    sectionAxes.removeAttribute("aria-hidden")
+    const sectionSubsetting = document.getElementById("section-subsetting")
+    sectionSubsetting.classList.remove("hidden-aria")
+    sectionSubsetting.removeAttribute("aria-hidden")
+    const sectionFeatures = document.getElementById("section-features")
+    sectionFeatures.classList.remove("hidden-aria") // This might be hidden by renderFeatureCheckboxes if no features
+    sectionFeatures.removeAttribute("aria-hidden")
+    const sectionExport = document.getElementById("section-export")
+    sectionExport.classList.remove("hidden-aria")
+    sectionExport.removeAttribute("aria-hidden")
 
     // Initial stats update
     updateStats()
@@ -302,10 +312,18 @@ async function loadFontBuffer(buffer, name) {
     showFontWorkspace()
 
     // Hide optimization sections for invalid fonts
-    document.getElementById("section-axes").style.display = "none"
-    document.getElementById("section-subsetting").style.display = "none"
-    document.getElementById("section-features").style.display = "none"
-    document.getElementById("section-export").style.display = "none"
+    const sectionAxesErr = document.getElementById("section-axes")
+    sectionAxesErr.classList.add("hidden-aria")
+    sectionAxesErr.setAttribute("aria-hidden", "true")
+    const sectionSubsettingErr = document.getElementById("section-subsetting")
+    sectionSubsettingErr.classList.add("hidden-aria")
+    sectionSubsettingErr.setAttribute("aria-hidden", "true")
+    const sectionFeaturesErr = document.getElementById("section-features")
+    sectionFeaturesErr.classList.add("hidden-aria")
+    sectionFeaturesErr.setAttribute("aria-hidden", "true")
+    const sectionExportErr = document.getElementById("section-export")
+    sectionExportErr.classList.add("hidden-aria")
+    sectionExportErr.setAttribute("aria-hidden", "true")
 
     // Still update preview if possible
     updatePreviewFont()
@@ -519,8 +537,10 @@ function generateFontFaceCSS() {
   if (preloadElement) {
     preloadElement.textContent = preloadHTML
   }
-  containerCss.style.display = "block"
-  containerHtml.style.display = "block"
+  containerCss.classList.remove("hidden-aria")
+  containerCss.removeAttribute("aria-hidden")
+  containerHtml.classList.remove("hidden-aria")
+  containerHtml.removeAttribute("aria-hidden")
 }
 
 function setupPreviewControls() {
@@ -681,11 +701,13 @@ function renderFeatureCheckboxes(font) {
 
   const tags = Object.keys(features).sort()
   if (tags.length === 0) {
-    section.style.display = "none"
+    section.classList.add("hidden-aria")
+    section.setAttribute("aria-hidden", "true")
     return
   }
 
-  section.style.display = "block"
+  section.classList.remove("hidden-aria")
+  section.removeAttribute("aria-hidden")
 
   tags.forEach((tag) => {
     const label = document.createElement("label")
@@ -713,10 +735,14 @@ function renderFeatureCheckboxes(font) {
   })
 
   // Hide empty groups
-  if (containerBasic.innerHTML === "")
-    containerBasic.parentElement.style.display = "none"
-  if (containerRare.innerHTML === "")
-    containerRare.parentElement.style.display = "none"
+  if (containerBasic.innerHTML === "") {
+    containerBasic.parentElement.classList.add("hidden-aria")
+    containerBasic.parentElement.setAttribute("aria-hidden", "true")
+  }
+  if (containerRare.innerHTML === "") {
+    containerRare.parentElement.classList.add("hidden-aria")
+    containerRare.parentElement.setAttribute("aria-hidden", "true")
+  }
 }
 
 function updatePreviewContent() {
